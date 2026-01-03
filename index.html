@@ -8,24 +8,43 @@
     :root{
       --bg:#0b0c10; --card:#111318; --text:#e9eef6; --muted:#9aa6b2;
       --line:#232733; --btn:#1c2230; --btn2:#22314a; --accent:#7aa2ff;
-      --ok:#24c08a; --warn:#ffcc66;
       --radius:14px;
-      --rowH:42px; /* 虛擬清單固定列高（要跟 JS 一致） */
+      --rowH:44px; /* 虛擬清單固定列高（要跟 JS 一致） */
+      --copyCol: 58px;
+      --colId: 120px;
+      --colTitle: 1.8fr;
+      --colArtist: 1.2fr;
+      --colWho: 90px;
+      --colLang: 80px;
+      --colPage: 90px;
+      --colWords: 70px;
+      --grid: var(--copyCol) var(--colId) var(--colTitle) var(--colArtist); /* JS 會動態改 */
       font-synthesis-weight:none;
     }
+
     *{box-sizing:border-box}
     body{
-      margin:0; background:linear-gradient(180deg,#07080b, #0b0c10 40%, #07080b);
+      margin:0;
+      background:linear-gradient(180deg,#07080b, #0b0c10 40%, #07080b);
       color:var(--text);
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
+      touch-action: pan-x pan-y; /* 手機左右滑更自然 */
     }
-    .wrap{max-width:1100px; margin:22px auto; padding:0 16px;}
+
+    .wrap{max-width:1100px; margin:18px auto; padding:0 14px;}
     header{
       display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
-      margin-bottom:14px;
+      margin-bottom:12px;
     }
     h1{margin:0; font-size:22px; letter-spacing:.5px}
     .sub{color:var(--muted); font-size:13px; margin-top:6px}
+    .pill{
+      font-size:12px; color:var(--muted);
+      padding:6px 10px; border:1px solid rgba(255,255,255,.08);
+      border-radius:999px;
+      background:rgba(0,0,0,.18);
+      white-space:nowrap;
+    }
     .card{
       background:rgba(17,19,24,.85);
       border:1px solid rgba(35,39,51,.9);
@@ -33,12 +52,14 @@
       box-shadow:0 10px 30px rgba(0,0,0,.35);
       overflow:hidden;
     }
+
     .toolbar{
       display:flex; flex-wrap:wrap;
       gap:10px; padding:12px;
       border-bottom:1px solid var(--line);
       align-items:center;
     }
+
     .btn{
       background:var(--btn);
       border:1px solid rgba(255,255,255,.08);
@@ -50,21 +71,21 @@
       display:inline-flex; align-items:center; gap:8px;
       user-select:none;
       transition:.15s transform, .15s background;
+      white-space:nowrap;
     }
     .btn:hover{background:var(--btn2)}
     .btn:active{transform:translateY(1px)}
     .btn.primary{border-color:rgba(122,162,255,.35)}
-    .btn.danger{border-color:rgba(255,102,102,.35)}
-    .pill{
-      font-size:12px; color:var(--muted);
-      padding:6px 10px; border:1px solid rgba(255,255,255,.08);
-      border-radius:999px;
-      background:rgba(0,0,0,.18);
+    .btn.big{
+      padding:12px 16px;
+      font-size:15px;
+      border-radius:14px;
+      font-weight:700;
+      background:rgba(122,162,255,.18);
+      border-color:rgba(122,162,255,.45);
     }
-    .ctrl{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-      margin-left:auto;
-    }
+    .btn.big:hover{background:rgba(122,162,255,.24)}
+
     label{font-size:12px; color:var(--muted)}
     select, input{
       background:rgba(0,0,0,.25);
@@ -75,12 +96,19 @@
       font-size:13px;
       outline:none;
     }
-    input{min-width:280px}
+    input{min-width:250px}
     input::placeholder{color:#7e8a96}
+
+    .ctrl{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+      margin-left:auto;
+    }
+
     .hint{
       padding:10px 12px; color:var(--muted);
       font-size:12px; border-bottom:1px solid var(--line);
       display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+      background:rgba(0,0,0,.10);
     }
     .kbd{
       border:1px solid rgba(255,255,255,.12);
@@ -91,25 +119,44 @@
       color:#d6dde6;
     }
 
-    /* Table header */
+    /* 手機左右滑外框 */
+    .mobile-hint{
+      display:none;
+      font-size:12px;
+      color:var(--muted);
+      padding:8px 12px;
+      border-bottom:1px solid var(--line);
+      background:rgba(0,0,0,.10);
+    }
+    .table-scroll{
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+    }
+    .table-min-width{
+      min-width: 820px; /* JS 會跟著欄位增加而調整 */
+    }
+
+    /* 表頭（可點排序） */
     .thead{
       display:grid;
-      grid-template-columns: 44px 90px 120px 1.6fr 1.2fr 80px 90px;
-      gap:0;
+      grid-template-columns: var(--grid);
       padding:10px 12px;
       font-size:12px;
       color:var(--muted);
       border-bottom:1px solid var(--line);
       background:rgba(0,0,0,.14);
+      user-select:none;
     }
-    .thead .th{padding:0 8px}
-    .thead .th:nth-child(1){padding-left:6px}
-    .thead .th.sortable{cursor:pointer}
-    .thead .th.sortable:hover{color:#c8d2dd}
+    .th{padding:0 8px; display:flex; align-items:center; gap:6px;}
+    .th:first-child{padding-left:6px}
+    .th.sortable{cursor:pointer}
+    .th.sortable:hover{color:#c8d2dd}
+    .sortMark{font-size:11px; opacity:.9}
+    .sortMark.off{opacity:.35}
 
-    /* Virtual list viewport */
+    /* 虛擬清單 */
     .viewport{
-      height: 68vh; /* 可自行調整 */
+      height: 68vh;
       overflow:auto;
       position:relative;
     }
@@ -119,10 +166,9 @@
       padding:0 12px 8px 12px;
     }
 
-    /* Row */
     .row{
       display:grid;
-      grid-template-columns: 44px 90px 120px 1.6fr 1.2fr 80px 90px;
+      grid-template-columns: var(--grid);
       align-items:center;
       height:var(--rowH);
       border-bottom:1px solid rgba(35,39,51,.7);
@@ -131,14 +177,7 @@
     .row:hover{background:rgba(255,255,255,.04)}
     .cell{padding:0 8px; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
     .cell.small{font-size:12px; color:#cdd6e1}
-    .chk{
-      display:flex; justify-content:center; align-items:center;
-    }
-    input[type="checkbox"]{
-      width:18px; height:18px; accent-color: var(--accent);
-      cursor:pointer;
-    }
-    .muted{color:var(--muted)}
+
     .tag{
       display:inline-flex; align-items:center;
       border:1px solid rgba(255,255,255,.12);
@@ -146,11 +185,24 @@
       font-size:12px; color:#cdd6e1;
       background:rgba(255,255,255,.06);
     }
-    .status{
-      margin-left:8px;
-      font-size:12px;
-      color:var(--muted);
+
+    .copyWrap{
+      display:flex; justify-content:center; align-items:center;
     }
+    .copyBtn{
+      width:38px; height:32px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      display:inline-flex; align-items:center; justify-content:center;
+      transition:.15s transform, .15s background;
+      user-select:none;
+    }
+    .copyBtn:hover{background:rgba(255,255,255,.10)}
+    .copyBtn:active{transform:translateY(1px)}
+    .copyBtn svg{width:18px; height:18px; opacity:.9}
 
     /* Toast */
     .toast{
@@ -164,9 +216,42 @@
       display:none;
       max-width:min(520px, calc(100vw - 28px));
       font-size:13px;
+      z-index:9999;
     }
     .toast.show{display:block}
     .toast .t{color:var(--muted); font-size:12px; margin-top:4px}
+
+    /* 欄位顯示切換區 */
+    .colsBox{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      padding:10px 12px;
+      border-bottom:1px solid var(--line);
+      background:rgba(0,0,0,.08);
+    }
+    .colsTitle{color:var(--muted); font-size:12px}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip input{width:16px; height:16px; margin:0; accent-color: var(--accent);}
+    .chip span{color:#cdd6e1}
+
+    /* 手機調整 */
+    @media (max-width: 820px){
+      .wrap{margin:12px auto}
+      h1{font-size:20px}
+      input{min-width:180px}
+      .mobile-hint{display:block}
+      .toolbar{gap:8px}
+      .btn{padding:9px 10px}
+      .btn.big{padding:12px 14px}
+    }
   </style>
 </head>
 
@@ -175,64 +260,71 @@
   <header>
     <div>
       <h1>二結點歌本速查</h1>
-      <div class="sub">目的：快速篩選找到歌曲（輸入後按 Enter 才會篩選）</div>
+      <div class="sub">手機可左右滑動表格，也可用瀏覽器兩指縮放。下拉選單支援多重篩選；點「篩選」可用文字查。</div>
     </div>
     <div class="pill" id="countPill">載入中…</div>
   </header>
 
   <div class="card">
     <div class="toolbar">
-      <button class="btn primary" id="btnCopy">📋 複製所選</button>
-      <button class="btn danger" id="btnClear">✖️ 取消選取</button>
-
-      <span class="status" id="selStatus">已選取 0 筆</span>
-
-      <div class="ctrl">
+      <div class="ctrl" style="margin-left:0;">
         <label>比對模式</label>
         <select id="mode">
           <option value="fuzzy">模糊比對</option>
           <option value="exact">精準比對</option>
         </select>
 
-        <label>排序</label>
-        <select id="sortKey">
-          <option value="who">誰的歌</option>
-          <option value="id">編號</option>
-          <option value="title" selected>歌名</option>
-          <option value="artist">歌手</option>
-          <option value="lang">語言</option>
-          <option value="page">頁數</option>
-        </select>
+        <input id="q" placeholder="文字查詢（Enter 或 點 篩選）" />
+        <button class="btn big primary" id="btnFilter">🔍 篩選</button>
+      </div>
 
-        <select id="sortDir">
-          <option value="asc">升冪</option>
-          <option value="desc">降冪</option>
-        </select>
+      <div class="ctrl">
+        <!-- 各變數下拉式（自動篩選，多重篩選） -->
+        <label>誰的歌</label>
+        <select id="filterWho"></select>
 
-        <input id="q" placeholder="輸入關鍵字（按 Enter 篩選）" />
+        <label>語言</label>
+        <select id="filterLang"></select>
+
+        <label>頁數</label>
+        <select id="filterPage"></select>
+
+        <label>歌手</label>
+        <select id="filterArtist"></select>
+
+        <label>字數</label>
+        <select id="filterWords"></select>
       </div>
     </div>
 
+    <!-- 欄位顯示切換（預設只顯示：編號 / 歌名 / 歌手；其他在後面） -->
+    <div class="colsBox">
+      <div class="colsTitle">顯示欄位（預設：編號 / 歌名 / 歌手）</div>
+      <label class="chip"><input type="checkbox" id="colWho" /><span>誰的歌</span></label>
+      <label class="chip"><input type="checkbox" id="colLang" /><span>語言</span></label>
+      <label class="chip"><input type="checkbox" id="colPage" /><span>頁數</span></label>
+      <label class="chip"><input type="checkbox" id="colWords" /><span>字數</span></label>
+    </div>
+
     <div class="hint">
-      <span class="muted">快捷：</span>
-      <span class="kbd">Enter</span><span class="muted">套用篩選</span>
-      <span class="kbd">Esc</span><span class="muted">清空輸入框（不自動篩選）</span>
-      <span class="muted">・提示：20,000 筆也只渲染可見列，滑動不卡</span>
+      <span class="muted">操作：</span>
+      <span class="kbd">Enter</span><span class="muted">文字篩選</span>
+      <span class="kbd">下拉選單</span><span class="muted">自動篩選（可多重）</span>
+      <span class="kbd">點表頭</span><span class="muted">升冪 → 降冪 → 取消排序</span>
+      <span class="muted">・每列左側「複製」按鈕可直接複製該筆</span>
     </div>
 
-    <div class="thead">
-      <div class="th">選</div>
-      <div class="th">誰的歌</div>
-      <div class="th">編號</div>
-      <div class="th">歌名</div>
-      <div class="th">歌手</div>
-      <div class="th">語言</div>
-      <div class="th">頁數</div>
-    </div>
+    <div class="mobile-hint">👉 手機模式：表格可左右滑動；也可用瀏覽器兩指縮放放大/縮小</div>
 
-    <div class="viewport" id="viewport">
-      <div class="spacer" id="spacer"></div>
-      <div class="rows" id="rows"></div>
+    <div class="table-scroll" id="tableScroll">
+      <div class="table-min-width" id="tableMinWidth">
+        <div class="thead" id="thead"></div>
+
+        <div class="viewport" id="viewport">
+          <div class="spacer" id="spacer"></div>
+          <div class="rows" id="rows"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -244,15 +336,11 @@
 
 <script>
 /**
- * ✅ 你只要把資料放進 SONGS 即可
+ * ✅ 你只要把資料放進 SONGS 即可（約 20000 筆也 OK）
  * 每筆格式：
  * { who, id, title, artist, lang, page }
  *
- * - who: 誰的歌（可空字串）
- * - id:  編號（字串或數字都可，但建議字串）
- * - page: 例如 "第071頁"
- *
- * 你可以先留空，之後再填 20000 筆。
+ * 新增變數：字數（words）會自動從 title 計算（去空白後的字元數）
  */
 const SONGS = [
   // --- 範例（你可刪/可留） ---
@@ -266,7 +354,6 @@ const SONGS = [
   { who:"妹妹", id:"912614", title:"真愛無後悔", artist:"蔡小虎、陳美鳳", lang:"台語", page:"第071頁" },
 
   // --- TODO: 你在這裡貼入你的 20000 筆資料 ---
-  // { who:"...", id:"...", title:"...", artist:"...", lang:"...", page:"第xxx頁" },
 ];
 
 // =============== 小工具 ===============
@@ -279,153 +366,9 @@ const toast = (msg, sub="") => {
   window.__toastTimer = setTimeout(()=> $("toast").classList.remove("show"), 2200);
 };
 
-const ROW_H = 42; // 要跟 CSS --rowH 一致
-const OVERSCAN = 10;
-
-// =============== 狀態 ===============
-let base = SONGS.slice();        // 原始
-let view = SONGS.slice();        // 篩選+排序後
-let selected = new Set();        // 存 row 的 key（這裡用 index in base 的 uid）
-let uidOf = [];                  // viewIndex -> uid
-let cacheKey = [];               // uid -> copy line
-
-// 生成 uid（固定對應 base 的索引）
-const initUID = () => {
-  // uid 直接用 base index
-  cacheKey = base.map(r => {
-    const who = (r.who || "").trim();
-    const id = (r.id ?? "").toString().trim();
-    const title = (r.title || "").trim();
-    const artist = (r.artist || "").trim();
-    const lang = (r.lang || "").trim();
-    const page = (r.page || "").trim();
-    // 複製用格式：誰的歌 編號 歌名 歌手 語言 頁數
-    return [who, id, title, artist, lang, page].filter(x=>x!=="" ).join("\t");
-  });
-};
-initUID();
-
-// =============== 篩選邏輯（Enter 才執行） ===============
 function normalize(s){
   return (s ?? "").toString().toLowerCase().trim();
 }
-function combinedText(r){
-  // 用於比對：把各欄位串起來
-  return normalize([r.who, r.id, r.title, r.artist, r.lang, r.page].join(" "));
-}
-
-/**
- * 模糊比對：
- * - query 以空白切 tokens
- * - 每個 token 都要出現在 combinedText 內（contains）
- *
- * 精準比對：
- * - query 當作整句，必須連續出現在 combinedText 內（contains phrase）
- *   （等同「更嚴格」的模糊）
- */
-function applyFilterAndSort(){
-  const mode = $("mode").value;
-  const qraw = $("q").value;
-  const q = normalize(qraw);
-
-  // 篩選
-  let filteredUIDs = [];
-  if(!q){
-    filteredUIDs = base.map((_, uid) => uid);
-  }else{
-    if(mode === "fuzzy"){
-      const tokens = q.split(/\s+/).filter(Boolean);
-      for(let uid=0; uid<base.length; uid++){
-        const t = combinedText(base[uid]);
-        let ok = true;
-        for(const tok of tokens){
-          if(!t.includes(tok)){ ok=false; break; }
-        }
-        if(ok) filteredUIDs.push(uid);
-      }
-    }else{ // exact
-      for(let uid=0; uid<base.length; uid++){
-        const t = combinedText(base[uid]);
-        if(t.includes(q)) filteredUIDs.push(uid);
-      }
-    }
-  }
-
-  // 排序
-  const key = $("sortKey").value;
-  const dir = $("sortDir").value;
-  const sign = (dir==="asc") ? 1 : -1;
-
-  const getVal = (r) => {
-    if(key==="id") return normalize(r.id ?? "");
-    if(key==="page") return normalize(r.page ?? "");
-    if(key==="who") return normalize(r.who ?? "");
-    if(key==="title") return normalize(r.title ?? "");
-    if(key==="artist") return normalize(r.artist ?? "");
-    if(key==="lang") return normalize(r.lang ?? "");
-    return normalize(r.title ?? "");
-  };
-
-  filteredUIDs.sort((a,b)=>{
-    const ra = base[a], rb = base[b];
-    const va = getVal(ra), vb = getVal(rb);
-    if(va < vb) return -1*sign;
-    if(va > vb) return  1*sign;
-    return (a-b)*sign;
-  });
-
-  // 產生 view
-  uidOf = filteredUIDs;
-  view = uidOf.map(uid => base[uid]);
-
-  // 更新 UI
-  $("countPill").textContent = `共 ${base.length.toLocaleString()} 筆｜顯示 ${view.length.toLocaleString()} 筆`;
-  updateSpacer();
-  render();
-}
-
-// =============== 虛擬清單 ===============
-function updateSpacer(){
-  $("spacer").style.height = (view.length * ROW_H + 8) + "px";
-}
-
-function render(){
-  const vp = $("viewport");
-  const rows = $("rows");
-
-  const scrollTop = vp.scrollTop;
-  const height = vp.clientHeight;
-
-  const start = Math.max(0, Math.floor(scrollTop / ROW_H) - OVERSCAN);
-  const end = Math.min(view.length, Math.ceil((scrollTop + height) / ROW_H) + OVERSCAN);
-
-  rows.style.transform = `translateY(${start * ROW_H}px)`;
-
-  let html = "";
-  for(let i=start; i<end; i++){
-    const r = view[i];
-    const uid = uidOf[i]; // base index
-    const isChecked = selected.has(uid) ? "checked" : "";
-    html += `
-      <div class="row" data-vi="${i}" data-uid="${uid}">
-        <div class="cell chk">
-          <input type="checkbox" data-uid="${uid}" ${isChecked} />
-        </div>
-        <div class="cell small" title="${escapeHtml(r.who||"")}">${escapeHtml(r.who||"")}</div>
-        <div class="cell" title="${escapeHtml((r.id??"").toString())}">${escapeHtml((r.id??"").toString())}</div>
-        <div class="cell" title="${escapeHtml(r.title||"")}">${escapeHtml(r.title||"")}</div>
-        <div class="cell" title="${escapeHtml(r.artist||"")}">${escapeHtml(r.artist||"")}</div>
-        <div class="cell"><span class="tag">${escapeHtml(r.lang||"")}</span></div>
-        <div class="cell small" title="${escapeHtml(r.page||"")}">${escapeHtml(r.page||"")}</div>
-      </div>
-    `;
-  }
-  rows.innerHTML = html;
-
-  // 更新選取狀態文字
-  $("selStatus").textContent = `已選取 ${selected.size.toLocaleString()} 筆`;
-}
-
 function escapeHtml(s){
   return (s ?? "").toString()
     .replaceAll("&","&amp;")
@@ -434,84 +377,462 @@ function escapeHtml(s){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
+function wordsCount(title){
+  // 「字數」：去空白後長度（中英都可）
+  const t = (title ?? "").toString().replace(/\s+/g, "");
+  return t.length;
+}
+function combinedText(r){
+  // 文字搜尋用
+  return normalize([r.who, r.id, r.title, r.artist, r.lang, r.page, r.words].join(" "));
+}
 
-// =============== 事件 ===============
-$("viewport").addEventListener("scroll", () => render());
+// =============== 狀態 ===============
+const ROW_H = 44;         // 要跟 CSS --rowH 一致
+const OVERSCAN = 10;
 
-// checkbox 事件（用事件代理）
-$("rows").addEventListener("change", (e) => {
-  const el = e.target;
-  if(el && el.matches('input[type="checkbox"][data-uid]')){
-    const uid = Number(el.getAttribute("data-uid"));
-    if(el.checked) selected.add(uid);
-    else selected.delete(uid);
-    $("selStatus").textContent = `已選取 ${selected.size.toLocaleString()} 筆`;
+let base = [];            // 原始（含 words）
+let viewUIDs = [];        // 篩選後 uid list（uid = base index）
+let view = [];            // viewUIDs map 的資料
+let copyLine = [];        // uid -> copy line
+
+let sortKey = "";         // "" 代表不排序
+let sortDir = "";         // "" / "asc" / "desc"
+
+// 欄位顯示：預設只顯示 id/title/artist（其他在後面可開）
+const shown = {
+  who: false,
+  lang: false,
+  page: false,
+  words: false
+};
+
+// 下拉篩選目前值（空字串 = 全部）
+const filters = {
+  who: "",
+  lang: "",
+  page: "",
+  artist: "",
+  words: ""
+};
+
+// =============== 欄位定義（排序用） ===============
+const COLS_BASE = [
+  { key:"copy",  label:"",          sortable:false, widthVar:"--copyCol" },
+  { key:"id",    label:"編號",      sortable:true,  widthVar:"--colId" },
+  { key:"title", label:"歌名",      sortable:true,  widthVar:"--colTitle" },
+  { key:"artist",label:"歌手",      sortable:true,  widthVar:"--colArtist" },
+];
+
+const COLS_EXTRA = [
+  { key:"who",   label:"誰的歌",    sortable:true,  widthVar:"--colWho" },
+  { key:"lang",  label:"語言",      sortable:true,  widthVar:"--colLang" },
+  { key:"page",  label:"頁數",      sortable:true,  widthVar:"--colPage" },
+  { key:"words", label:"字數",      sortable:true,  widthVar:"--colWords" },
+];
+
+// =============== 初始化資料 ===============
+function init(){
+  base = SONGS.map((r) => {
+    const obj = {
+      who: (r.who ?? "").toString().trim(),
+      id: (r.id ?? "").toString().trim(),
+      title: (r.title ?? "").toString().trim(),
+      artist: (r.artist ?? "").toString().trim(),
+      lang: (r.lang ?? "").toString().trim(),
+      page: (r.page ?? "").toString().trim(),
+    };
+    obj.words = wordsCount(obj.title); // 新增字數
+    return obj;
+  });
+
+  copyLine = base.map(r => {
+    // 複製格式：誰的歌 編號 歌名 歌手 語言 頁數 字數（用 tab 分隔，貼到 Excel/LINE 都方便）
+    return [
+      r.who, r.id, r.title, r.artist, r.lang, r.page, String(r.words)
+    ].filter(x => x !== "").join("\t");
+  });
+
+  buildFilterOptions();
+  bindUI();
+  rebuildColumnsAndHeader();
+  applyFilterSortRender(true);
+}
+
+// =============== 建立下拉選單選項（自動生成） ===============
+function uniqueValues(key){
+  const set = new Set();
+  for(const r of base){
+    const v = (r[key] ?? "").toString().trim();
+    if(v) set.add(v);
   }
-});
+  return Array.from(set);
+}
 
-// Enter 篩選
-$("q").addEventListener("keydown", (e) => {
-  if(e.key === "Enter"){
-    applyFilterAndSort();
-    toast("已套用篩選", `顯示 ${view.length.toLocaleString()} 筆`);
-  }else if(e.key === "Escape"){
-    $("q").value = "";
-    toast("已清空輸入框", "按 Enter 才會重新篩選");
-  }
-});
+// 對於選項非常多的欄位，限制選項數量（避免 dropdown 爆炸）
+const MAX_OPTIONS = 250;
 
-// 排序變更（立即套用）
-$("sortKey").addEventListener("change", () => applyFilterAndSort());
-$("sortDir").addEventListener("change", () => applyFilterAndSort());
-$("mode").addEventListener("change", () => {
-  // 不強制立即篩選也可以，但使用者通常切模式就想看到結果
-  applyFilterAndSort();
-  toast("已切換模式", $("mode").value === "fuzzy" ? "模糊比對" : "精準比對");
-});
+function setSelectOptions(selectEl, values, placeholder="全部"){
+  selectEl.innerHTML = "";
+  const optAll = document.createElement("option");
+  optAll.value = "";
+  optAll.textContent = placeholder;
+  selectEl.appendChild(optAll);
 
-// 複製所選
-$("btnCopy").addEventListener("click", async () => {
-  if(selected.size === 0){
-    toast("沒有選取任何資料", "請先勾選要複製的歌曲");
+  if(values.length > MAX_OPTIONS){
+    const opt = document.createElement("option");
+    opt.value = "";
+    opt.textContent = `（選項太多：${values.length}，請改用文字篩選）`;
+    opt.disabled = true;
+    selectEl.appendChild(opt);
     return;
   }
-  // 按「目前排序」的順序輸出（從 view 走一遍）
-  const lines = [];
-  for(let i=0; i<uidOf.length; i++){
-    const uid = uidOf[i];
-    if(selected.has(uid)) lines.push(cacheKey[uid]);
+
+  for(const v of values){
+    const o = document.createElement("option");
+    o.value = v;
+    o.textContent = v;
+    selectEl.appendChild(o);
   }
-  const text = lines.join("\n");
+}
+
+function buildFilterOptions(){
+  // who/lang/page/artist：從資料自動抓
+  const whos = uniqueValues("who").sort((a,b)=>a.localeCompare(b, "zh-Hant"));
+  const langs = uniqueValues("lang").sort((a,b)=>a.localeCompare(b, "zh-Hant"));
+  const pages = uniqueValues("page").sort((a,b)=>a.localeCompare(b, "zh-Hant"));
+  const artists = uniqueValues("artist").sort((a,b)=>a.localeCompare(b, "zh-Hant"));
+
+  setSelectOptions($("filterWho"), whos, "全部");
+  setSelectOptions($("filterLang"), langs, "全部");
+  setSelectOptions($("filterPage"), pages, "全部");
+  setSelectOptions($("filterArtist"), artists, "全部");
+
+  // 字數：用區間，避免太多
+  const bins = [
+    { value:"1-2",  label:"1-2" },
+    { value:"3-4",  label:"3-4" },
+    { value:"5-6",  label:"5-6" },
+    { value:"7-8",  label:"7-8" },
+    { value:"9-10", label:"9-10" },
+    { value:"11-14",label:"11-14" },
+    { value:"15+",  label:"15+" },
+  ];
+  const sel = $("filterWords");
+  sel.innerHTML = "";
+  sel.appendChild(new Option("全部", ""));
+  for(const b of bins){
+    sel.appendChild(new Option(b.label, b.value));
+  }
+}
+
+// =============== 綁定 UI 事件 ===============
+function bindUI(){
+  // 文字篩選：Enter 或按「篩選」
+  $("q").addEventListener("keydown", (e) => {
+    if(e.key === "Enter"){
+      applyFilterSortRender();
+      toast("已套用文字篩選", `顯示 ${viewUIDs.length.toLocaleString()} 筆`);
+    }else if(e.key === "Escape"){
+      $("q").value = "";
+      toast("已清空文字輸入", "（不自動篩選，按 Enter 或 篩選）");
+    }
+  });
+  $("btnFilter").addEventListener("click", () => {
+    applyFilterSortRender();
+    toast("已套用篩選", `顯示 ${viewUIDs.length.toLocaleString()} 筆`);
+  });
+
+  // 模式切換（不強制立即篩選也可；這裡直接套用）
+  $("mode").addEventListener("change", () => {
+    applyFilterSortRender();
+    toast("已切換比對模式", $("mode").value === "fuzzy" ? "模糊比對" : "精準比對");
+  });
+
+  // 下拉選單：選了就自動篩選（可多重）
+  $("filterWho").addEventListener("change", () => { filters.who = $("filterWho").value; applyFilterSortRender(); });
+  $("filterLang").addEventListener("change", () => { filters.lang = $("filterLang").value; applyFilterSortRender(); });
+  $("filterPage").addEventListener("change", () => { filters.page = $("filterPage").value; applyFilterSortRender(); });
+  $("filterArtist").addEventListener("change", () => { filters.artist = $("filterArtist").value; applyFilterSortRender(); });
+  $("filterWords").addEventListener("change", () => { filters.words = $("filterWords").value; applyFilterSortRender(); });
+
+  // 欄位顯示切換
+  $("colWho").addEventListener("change", () => { shown.who = $("colWho").checked; rebuildColumnsAndHeader(); applyFilterSortRender(true); });
+  $("colLang").addEventListener("change", () => { shown.lang = $("colLang").checked; rebuildColumnsAndHeader(); applyFilterSortRender(true); });
+  $("colPage").addEventListener("change", () => { shown.page = $("colPage").checked; rebuildColumnsAndHeader(); applyFilterSortRender(true); });
+  $("colWords").addEventListener("change", () => { shown.words = $("colWords").checked; rebuildColumnsAndHeader(); applyFilterSortRender(true); });
+
+  // 虛擬捲動
+  $("viewport").addEventListener("scroll", () => render());
+  window.addEventListener("resize", () => render());
+
+  // 列表事件代理：複製按鈕
+  $("rows").addEventListener("click", async (e) => {
+    const btn = e.target.closest("[data-copy-uid]");
+    if(!btn) return;
+    const uid = Number(btn.getAttribute("data-copy-uid"));
+    const text = copyLine[uid] ?? "";
+    if(!text){
+      toast("無法複製", "該筆資料為空");
+      return;
+    }
+    await copyToClipboard(text);
+    toast("已複製", base[uid]?.title ? `「${base[uid].title}」` : "");
+  });
+}
+
+async function copyToClipboard(text){
   try{
     await navigator.clipboard.writeText(text);
-    toast("已複製到剪貼簿", `${lines.length.toLocaleString()} 筆`);
-  }catch(err){
-    // fallback
+  }catch(_){
     const ta = document.createElement("textarea");
     ta.value = text;
     document.body.appendChild(ta);
     ta.select();
     document.execCommand("copy");
     document.body.removeChild(ta);
-    toast("已複製到剪貼簿（fallback）", `${lines.length.toLocaleString()} 筆`);
   }
-});
+}
 
-// 取消選取
-$("btnClear").addEventListener("click", () => {
-  selected.clear();
-  render(); // 重新渲染讓 checkbox 取消
-  toast("已取消選取", "全部勾選已清空");
-});
+// =============== 動態欄位 + 表頭 + Grid 設定 ===============
+function getActiveCols(){
+  // 預設：copy + id + title + artist
+  const cols = [...COLS_BASE];
+  // 其他欄位「排列在後面」
+  if(shown.who) cols.push(COLS_EXTRA.find(c=>c.key==="who"));
+  if(shown.lang) cols.push(COLS_EXTRA.find(c=>c.key==="lang"));
+  if(shown.page) cols.push(COLS_EXTRA.find(c=>c.key==="page"));
+  if(shown.words) cols.push(COLS_EXTRA.find(c=>c.key==="words"));
+  return cols.filter(Boolean);
+}
 
-// 初始
-(function boot(){
-  $("countPill").textContent = `共 ${base.length.toLocaleString()} 筆`;
+function rebuildColumnsAndHeader(){
+  const cols = getActiveCols();
+
+  // 設定 CSS --grid
+  const parts = cols.map(c => `var(${c.widthVar})`);
+  document.documentElement.style.setProperty("--grid", parts.join(" "));
+
+  // table 最小寬：估算（避免欄位開太多手機也能左右滑）
+  // 這裡用固定加總：把 fr 當作 260px（粗估），讓 min width 足夠
+  let minW = 0;
+  for(const c of cols){
+    if(c.widthVar === "--colTitle") minW += 320;
+    else if(c.widthVar === "--colArtist") minW += 220;
+    else if(c.widthVar === "--copyCol") minW += 66;
+    else if(c.widthVar === "--colId") minW += 140;
+    else if(c.widthVar === "--colWho") minW += 110;
+    else if(c.widthVar === "--colLang") minW += 100;
+    else if(c.widthVar === "--colPage") minW += 110;
+    else if(c.widthVar === "--colWords") minW += 90;
+    else minW += 110;
+  }
+  $("tableMinWidth").style.minWidth = Math.max(820, minW) + "px";
+
+  // 建表頭（可點排序）
+  const thead = $("thead");
+  let html = "";
+  for(const c of cols){
+    if(c.key === "copy"){
+      html += `<div class="th">${""}</div>`;
+      continue;
+    }
+    const isActive = (sortKey === c.key);
+    const mark =
+      !isActive ? `<span class="sortMark off">↕</span>` :
+      (sortDir === "asc") ? `<span class="sortMark">↑</span>` :
+      (sortDir === "desc") ? `<span class="sortMark">↓</span>` :
+      `<span class="sortMark off">↕</span>`;
+
+    html += `
+      <div class="th sortable" data-sort-key="${c.key}">
+        <span>${escapeHtml(c.label)}</span>
+        ${mark}
+      </div>
+    `;
+  }
+  thead.innerHTML = html;
+
+  // 表頭點擊排序：升冪 → 降冪 → 取消排序
+  thead.onclick = (e) => {
+    const el = e.target.closest("[data-sort-key]");
+    if(!el) return;
+    const key = el.getAttribute("data-sort-key");
+    if(sortKey !== key){
+      sortKey = key;
+      sortDir = "asc";
+    }else{
+      if(sortDir === "asc") sortDir = "desc";
+      else if(sortDir === "desc"){ sortKey = ""; sortDir = ""; }
+      else sortDir = "asc";
+    }
+    rebuildColumnsAndHeader(); // 更新排序箭頭
+    applyFilterSortRender();
+  };
+}
+
+// =============== 篩選 + 排序 + 渲染 ===============
+function passDropdownFilters(r){
+  if(filters.who && r.who !== filters.who) return false;
+  if(filters.lang && r.lang !== filters.lang) return false;
+  if(filters.page && r.page !== filters.page) return false;
+  if(filters.artist && r.artist !== filters.artist) return false;
+
+  if(filters.words){
+    const w = r.words ?? 0;
+    const f = filters.words;
+    if(f === "1-2" && !(w>=1 && w<=2)) return false;
+    if(f === "3-4" && !(w>=3 && w<=4)) return false;
+    if(f === "5-6" && !(w>=5 && w<=6)) return false;
+    if(f === "7-8" && !(w>=7 && w<=8)) return false;
+    if(f === "9-10" && !(w>=9 && w<=10)) return false;
+    if(f === "11-14" && !(w>=11 && w<=14)) return false;
+    if(f === "15+" && !(w>=15)) return false;
+  }
+  return true;
+}
+
+function passTextFilter(r){
+  const mode = $("mode").value;
+  const q = normalize($("q").value);
+  if(!q) return true;
+
+  const t = combinedText(r);
+  if(mode === "fuzzy"){
+    const tokens = q.split(/\s+/).filter(Boolean);
+    for(const tok of tokens){
+      if(!t.includes(tok)) return false;
+    }
+    return true;
+  }else{
+    return t.includes(q);
+  }
+}
+
+function getSortVal(r, key){
+  if(key === "words") return r.words ?? 0;
+  if(key === "id") return normalize(r.id);
+  if(key === "title") return normalize(r.title);
+  if(key === "artist") return normalize(r.artist);
+  if(key === "who") return normalize(r.who);
+  if(key === "lang") return normalize(r.lang);
+  if(key === "page") return normalize(r.page);
+  return normalize(r.title);
+}
+
+function applyFilterSortRender(keepScroll=false){
+  const prevTop = $("viewport").scrollTop;
+
+  // 篩選
+  const uids = [];
+  for(let uid=0; uid<base.length; uid++){
+    const r = base[uid];
+    if(!passDropdownFilters(r)) continue;
+    if(!passTextFilter(r)) continue;
+    uids.push(uid);
+  }
+
+  // 排序（若 sortKey 空字串 = 不排序，維持原始順序）
+  if(sortKey && sortDir){
+    const sign = (sortDir === "asc") ? 1 : -1;
+    uids.sort((a,b)=>{
+      const ra = base[a], rb = base[b];
+      const va = getSortVal(ra, sortKey);
+      const vb = getSortVal(rb, sortKey);
+
+      // 數字排序（字數）
+      if(sortKey === "words"){
+        return (va - vb) * sign || (a-b);
+      }
+
+      if(va < vb) return -1*sign;
+      if(va > vb) return  1*sign;
+      return (a-b);
+    });
+  }
+
+  viewUIDs = uids;
+  view = viewUIDs.map(uid => base[uid]);
+
+  $("countPill").textContent = `共 ${base.length.toLocaleString()} 筆｜顯示 ${viewUIDs.length.toLocaleString()} 筆`;
+
   updateSpacer();
   render();
-  // 若你想一進來就做一次排序（例如歌名升冪），可以取消註解：
-  applyFilterAndSort();
-})();
+
+  if(keepScroll){
+    $("viewport").scrollTop = Math.min(prevTop, Math.max(0, viewUIDs.length*ROW_H - $("viewport").clientHeight));
+  }else{
+    $("viewport").scrollTop = 0;
+  }
+}
+
+function updateSpacer(){
+  $("spacer").style.height = (viewUIDs.length * ROW_H + 8) + "px";
+}
+
+// =============== 虛擬渲染 ===============
+function render(){
+  const vp = $("viewport");
+  const rows = $("rows");
+
+  const scrollTop = vp.scrollTop;
+  const height = vp.clientHeight;
+
+  const start = Math.max(0, Math.floor(scrollTop / ROW_H) - OVERSCAN);
+  const end = Math.min(viewUIDs.length, Math.ceil((scrollTop + height) / ROW_H) + OVERSCAN);
+
+  rows.style.transform = `translateY(${start * ROW_H}px)`;
+
+  const cols = getActiveCols();
+
+  let html = "";
+  for(let i=start; i<end; i++){
+    const uid = viewUIDs[i];
+    const r = base[uid];
+
+    const cells = [];
+    for(const c of cols){
+      if(c.key === "copy"){
+        cells.push(`
+          <div class="cell copyWrap">
+            <button class="copyBtn" title="複製這一筆" data-copy-uid="${uid}">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M9 9h10v12H9V9Z" stroke="currentColor" stroke-width="1.8" />
+                <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+            </button>
+          </div>
+        `);
+        continue;
+      }
+
+      if(c.key === "id"){
+        cells.push(`<div class="cell" title="${escapeHtml(r.id)}">${escapeHtml(r.id)}</div>`);
+      }else if(c.key === "title"){
+        cells.push(`<div class="cell" title="${escapeHtml(r.title)}">${escapeHtml(r.title)}</div>`);
+      }else if(c.key === "artist"){
+        cells.push(`<div class="cell" title="${escapeHtml(r.artist)}">${escapeHtml(r.artist)}</div>`);
+      }else if(c.key === "who"){
+        cells.push(`<div class="cell small" title="${escapeHtml(r.who)}">${escapeHtml(r.who)}</div>`);
+      }else if(c.key === "lang"){
+        cells.push(`<div class="cell"><span class="tag">${escapeHtml(r.lang)}</span></div>`);
+      }else if(c.key === "page"){
+        cells.push(`<div class="cell small" title="${escapeHtml(r.page)}">${escapeHtml(r.page)}</div>`);
+      }else if(c.key === "words"){
+        cells.push(`<div class="cell small" title="${escapeHtml(String(r.words))}">${escapeHtml(String(r.words))}</div>`);
+      }else{
+        cells.push(`<div class="cell"></div>`);
+      }
+    }
+
+    html += `<div class="row" data-uid="${uid}">${cells.join("")}</div>`;
+  }
+
+  rows.innerHTML = html;
+}
+
+// =============== 啟動 ===============
+init();
 </script>
 
 </body>
