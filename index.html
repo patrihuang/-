@@ -6,6 +6,14 @@
   <title>二結點歌本速查</title>
   <style>
     :root{
+      /* ✅ 1) 全站字體放大為兩倍（所有 rem/px 視覺都會等比例放大） */
+      font-size: 200%;
+
+      /* ✅ Theme variables (Dark default) */
+      --bgTop:#07080b;
+      --bgMid:#0b0c10;
+      --bgBot:#07080b;
+
       --bg:#0b0c10; --card:#111318; --text:#e9eef6; --muted:#9aa6b2;
       --line:#232733; --btn:#1c2230; --btn2:#22314a; --accent:#7aa2ff;
       --radius:14px;
@@ -30,10 +38,27 @@
       font-synthesis-weight:none;
     }
 
+    /* ✅ 2) Light mode: 只要在 html 加上 data-theme="light" 就切換 */
+    html[data-theme="light"]{
+      --bgTop:#f7f8fb;
+      --bgMid:#f1f3f7;
+      --bgBot:#edf0f5;
+
+      --bg:#f2f4f8;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --line:#d9dee8;
+
+      --btn:#eef2f7;
+      --btn2:#e2e8f0;
+      --accent:#2b6bff;
+    }
+
     *{box-sizing:border-box}
     body{
       margin:0;
-      background:linear-gradient(180deg,#07080b, #0b0c10 40%, #07080b);
+      background:linear-gradient(180deg, var(--bgTop), var(--bgMid) 40%, var(--bgBot));
       color:var(--text);
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
       touch-action: pan-x pan-y;
@@ -53,6 +78,10 @@
       background:rgba(0,0,0,.18);
       white-space:nowrap;
     }
+    html[data-theme="light"] .pill{
+      border:1px solid rgba(15,23,42,.12);
+      background:rgba(255,255,255,.75);
+    }
 
     .card{
       background:rgba(17,19,24,.85);
@@ -60,6 +89,11 @@
       border-radius:var(--radius);
       box-shadow:0 10px 30px rgba(0,0,0,.35);
       overflow:hidden;
+    }
+    html[data-theme="light"] .card{
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(15,23,42,.10);
+      box-shadow:0 10px 30px rgba(15,23,42,.10);
     }
 
     .toolbar{
@@ -83,8 +117,14 @@
       height:44px;
       line-height:22px;
     }
+    html[data-theme="light"] select,
+    html[data-theme="light"] input{
+      background:rgba(255,255,255,.95);
+      border:1px solid rgba(15,23,42,.14);
+    }
     input{min-width:260px}
     input::placeholder{color:#7e8a96}
+    html[data-theme="light"] input::placeholder{color:#64748b}
 
     .btn{
       background:var(--btn);
@@ -102,13 +142,21 @@
       line-height:22px;
       font-weight:800;
     }
+    html[data-theme="light"] .btn{
+      border:1px solid rgba(15,23,42,.12);
+    }
     .btn:hover{background:var(--btn2)}
     .btn:active{transform:translateY(1px)}
     .btn.primary{
       background:rgba(122,162,255,.18);
       border-color:rgba(122,162,255,.45);
     }
+    html[data-theme="light"] .btn.primary{
+      background:rgba(43,107,255,.14);
+      border-color:rgba(43,107,255,.35);
+    }
     .btn.primary:hover{background:rgba(122,162,255,.24)}
+    html[data-theme="light"] .btn.primary:hover{background:rgba(43,107,255,.18)}
 
     .iconBtn{
       width:44px; height:44px;
@@ -130,7 +178,12 @@
       font-size:18px;
       line-height:44px;
     }
+    html[data-theme="light"] .xBtn{
+      background:rgba(15,23,42,.04);
+      border:1px solid rgba(15,23,42,.12);
+    }
     .xBtn:hover{background:rgba(255,255,255,.10)}
+    html[data-theme="light"] .xBtn:hover{background:rgba(15,23,42,.07)}
 
     .left{
       display:flex; gap:10px; flex-wrap:wrap; align-items:center;
@@ -154,6 +207,9 @@
     details.advanced{
       border-bottom:1px solid var(--line);
       background:rgba(0,0,0,.08);
+    }
+    html[data-theme="light"] details.advanced{
+      background:rgba(15,23,42,.03);
     }
     details.advanced > summary{
       list-style:none;
@@ -185,8 +241,13 @@
       user-select:none;
       white-space:nowrap;
     }
+    html[data-theme="light"] .chip{
+      border:1px solid rgba(15,23,42,.12);
+      background:rgba(255,255,255,.65);
+    }
     .chip input{width:16px; height:16px; margin:0; accent-color: var(--accent);}
     .chip span{color:#cdd6e1}
+    html[data-theme="light"] .chip span{color:#0f172a}
 
     .radioWrap{
       display:flex;
@@ -196,6 +257,10 @@
       border:1px solid rgba(255,255,255,.12);
       background:rgba(255,255,255,.05);
       border-radius:999px;
+    }
+    html[data-theme="light"] .radioWrap{
+      border:1px solid rgba(15,23,42,.12);
+      background:rgba(255,255,255,.65);
     }
     .radioWrap label{
       display:flex; align-items:center; gap:8px;
@@ -226,6 +291,9 @@
       background:rgba(0,0,0,.14);
       user-select:none;
     }
+    html[data-theme="light"] .thead{
+      background:rgba(15,23,42,.04);
+    }
     .th{
       padding:0 8px;
       display:flex; align-items:center; gap:6px;
@@ -234,6 +302,7 @@
     .th:first-child{padding-left:6px}
     .th.sortable{cursor:pointer}
     .th.sortable:hover{color:#c8d2dd}
+    html[data-theme="light"] .th.sortable:hover{color:#0f172a}
     .sortMark{font-size:11px; opacity:.9}
     .sortMark.off{opacity:.35}
 
@@ -259,6 +328,10 @@
       cursor:pointer;
     }
     .row:hover{background:rgba(255,255,255,.04)}
+    html[data-theme="light"] .row{
+      border-bottom:1px solid rgba(15,23,42,.10);
+    }
+    html[data-theme="light"] .row:hover{background:rgba(15,23,42,.04)}
 
     .cell{
       padding:8px 8px;
@@ -282,6 +355,7 @@
       white-space:nowrap;
       text-overflow:ellipsis;
     }
+    html[data-theme="light"] .cell.small{color:#334155}
 
     .tag{
       display:inline-flex; align-items:center;
@@ -290,6 +364,11 @@
       font-size:12px; color:#cdd6e1;
       background:rgba(255,255,255,.06);
       white-space:nowrap;
+    }
+    html[data-theme="light"] .tag{
+      border:1px solid rgba(15,23,42,.12);
+      color:#0f172a;
+      background:rgba(15,23,42,.04);
     }
 
     .copyWrap{
@@ -306,7 +385,12 @@
       transition:.15s transform, .15s background;
       user-select:none;
     }
+    html[data-theme="light"] .copyBtn{
+      border:1px solid rgba(15,23,42,.12);
+      background:rgba(15,23,42,.03);
+    }
     .copyBtn:hover{background:rgba(255,255,255,.10)}
+    html[data-theme="light"] .copyBtn:hover{background:rgba(15,23,42,.06)}
     .copyBtn:active{transform:translateY(1px)}
     .copyBtn svg{width:18px; height:18px; opacity:.9}
 
@@ -324,6 +408,11 @@
       font-size:13px;
       z-index:9999;
     }
+    html[data-theme="light"] .toast{
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(15,23,42,.12);
+      box-shadow:0 12px 30px rgba(15,23,42,.14);
+    }
     .toast.show{display:block}
     .toast .t{color:var(--muted); font-size:12px; margin-top:4px}
 
@@ -337,6 +426,9 @@
       padding:16px;
       z-index:10000;
     }
+    html[data-theme="light"] .modalBack{
+      background:rgba(15,23,42,.35);
+    }
     .modalBack.show{display:flex}
     .modal{
       width:min(720px, 100%);
@@ -346,10 +438,18 @@
       box-shadow:0 18px 60px rgba(0,0,0,.55);
       overflow:hidden;
     }
+    html[data-theme="light"] .modal{
+      background:rgba(255,255,255,.96);
+      border:1px solid rgba(15,23,42,.12);
+      box-shadow:0 18px 60px rgba(15,23,42,.18);
+    }
     .modalHead{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding:12px 14px;
       border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    html[data-theme="light"] .modalHead{
+      border-bottom:1px solid rgba(15,23,42,.10);
     }
     .modalTitle{
       font-weight:900;
@@ -367,6 +467,10 @@
       cursor:pointer;
       font-size:13px;
     }
+    html[data-theme="light"] .modalClose{
+      background:rgba(15,23,42,.04);
+      border:1px solid rgba(15,23,42,.12);
+    }
     .modalBody{
       padding:12px 14px;
       display:grid;
@@ -380,6 +484,9 @@
       padding:12px 14px;
       border-top:1px solid rgba(255,255,255,.10);
       display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;
+    }
+    html[data-theme="light"] .modalFoot{
+      border-top:1px solid rgba(15,23,42,.10);
     }
 
     /* 手機 */
@@ -409,17 +516,14 @@
     <div class="toolbar">
       <div class="left">
         <input id="q" placeholder="查詢（點🔍）" />
-        <!-- ✅ 2-1：只留放大鏡 -->
         <button class="btn primary iconBtn" id="btnFilter" title="套用文字查詢" aria-label="套用文字查詢">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
             <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
         </button>
-        <!-- ✅ 2：取消篩選（X） -->
         <button class="btn xBtn" id="btnClearFilters" title="取消篩選/清空" aria-label="取消篩選">×</button>
 
-        <!-- ✅ 下拉式（語言、字數、誰的歌）靠左同排 -->
         <div class="filtersRow">
           <label>語言</label>
           <select id="filterLang"></select>
@@ -433,11 +537,11 @@
       </div>
     </div>
 
-    <!-- ✅ 1：進階設定：顯示欄位 + 比對方式 -->
+    <!-- ✅ 進階設定：顯示欄位 + 比對方式 + 淺色模式 -->
     <details class="advanced" id="advanced">
       <summary>
         <span style="font-weight:800;">進階設定</span>
-        <span style="opacity:.75;">（顯示欄位、比對方式）</span>
+        <span style="opacity:.75;">（顯示欄位、比對方式、外觀）</span>
       </summary>
       <div class="advBody">
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
@@ -458,6 +562,12 @@
             <span>精準比對</span>
           </label>
         </div>
+
+        <!-- ✅ 2) 淺色模式開關（放進進階設定） -->
+        <label class="chip" title="切換淺色模式（會記住）">
+          <input type="checkbox" id="toggleLight" />
+          <span>淺色模式</span>
+        </label>
       </div>
     </details>
 
@@ -479,7 +589,6 @@
   <div class="t" id="toastSub"></div>
 </div>
 
-<!-- 詳細資料視窗 -->
 <div class="modalBack" id="modalBack" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="modal">
     <div class="modalHead">
@@ -494,10 +603,8 @@
   </div>
 </div>
 
-<!-- ✅ 一定要先載入資料 -->
 <script src="./songs.js"></script>
 
-<!-- ✅ 你的主程式 JS，一定要整段包在 script 裡 -->
 <script>
 if (!window.SONGS || !Array.isArray(window.SONGS)) {
   alert("songs.js 載入失敗，請確認檔案存在");
@@ -531,7 +638,6 @@ function escapeHtml(s){
     .replaceAll("'","&#039;");
 }
 
-
 async function copyToClipboard(text){
   try{ await navigator.clipboard.writeText(text); }
   catch(_){
@@ -545,6 +651,17 @@ async function copyToClipboard(text){
 }
 function currentMatchMode(){
   return document.querySelector('input[name="matchMode"]:checked')?.value || "fuzzy";
+}
+
+/* ✅ Light mode helpers (記住選擇) */
+const THEME_KEY = "songbook_theme";
+function setTheme(theme){
+  if(theme === "light") document.documentElement.setAttribute("data-theme","light");
+  else document.documentElement.removeAttribute("data-theme");
+  try{ localStorage.setItem(THEME_KEY, theme); }catch(_){}
+}
+function getTheme(){
+  try{ return localStorage.getItem(THEME_KEY) || "dark"; }catch(_){ return "dark"; }
 }
 
 // ===== 虛擬清單設定 =====
@@ -582,6 +699,11 @@ const COLS_EXTRA = [
 
 // ===== 初始化 =====
 function init(){
+  /* ✅ 套用已記住的主題 */
+  const theme = getTheme();
+  setTheme(theme);
+  $("toggleLight").checked = (theme === "light");
+
   base = SONGS.map(r => ({
     who: (r.who ?? "").toString().trim(),
     id: (r.id ?? "").toString().trim(),
@@ -637,6 +759,12 @@ function buildFilterOptions(){
 
 // ===== UI 綁定 =====
 function bindUI(){
+  // ✅ 淺色模式切換
+  $("toggleLight").addEventListener("change", () => {
+    setTheme($("toggleLight").checked ? "light" : "dark");
+    toast($("toggleLight").checked ? "已切換淺色模式" : "已切換深色模式");
+  });
+
   // 文字查詢：Enter 或按 🔍
   $("q").addEventListener("keydown", (e) => {
     if(e.key === "Enter"){
@@ -676,7 +804,7 @@ function bindUI(){
   $("colWho").addEventListener("change", () => { shown.who  = $("colWho").checked;  rebuildColumnsAndHeader(); applyFilterSortRender(true); });
   $("colPage").addEventListener("change", () => { shown.page = $("colPage").checked; rebuildColumnsAndHeader(); applyFilterSortRender(true); });
 
-  // 模式切換：不自動篩選（避免打字中一直變），但你想要也可開
+  // 模式切換：不自動篩選（避免打字中一直變）
   $("modeFuzzy").addEventListener("change", () => {});
   $("modeExact").addEventListener("change", () => {});
 
@@ -721,7 +849,6 @@ function bindUI(){
 // ===== 欄位 / 表頭 / Grid =====
 function getActiveCols(){
   const cols = [...COLS_BASE];
-  // 依你想要順序：語言、字數、誰的歌、頁數（但是否顯示由進階設定控制）
   if(shown.lang) cols.push(COLS_EXTRA.find(c=>c.key==="lang"));
   if(shown.len)  cols.push(COLS_EXTRA.find(c=>c.key==="len"));
   if(shown.who)  cols.push(COLS_EXTRA.find(c=>c.key==="who"));
@@ -732,15 +859,13 @@ function getActiveCols(){
 function rebuildColumnsAndHeader(){
   const cols = getActiveCols();
 
-  // 設定 CSS --grid
   const parts = cols.map(c => `var(${c.widthVar})`);
   document.documentElement.style.setProperty("--grid", parts.join(" "));
 
-  // 最小寬估算
   let minW = 0;
   for(const c of cols){
     if(c.widthVar === "--copyCol") minW += 70;
-    else if(c.widthVar === "--colFixed") minW += 10 * 10 + 40; // 粗估 10ch + padding
+    else if(c.widthVar === "--colFixed") minW += 10 * 10 + 40;
     else if(c.widthVar === "--colLang") minW += 120;
     else if(c.widthVar === "--colLen") minW += 90;
     else if(c.widthVar === "--colWho") minW += 140;
@@ -749,7 +874,6 @@ function rebuildColumnsAndHeader(){
   }
   $("tableMinWidth").style.minWidth = Math.max(520, minW) + "px";
 
-  // 表頭
   const thead = $("thead");
   let html = "";
   for(const c of cols){
@@ -773,7 +897,6 @@ function rebuildColumnsAndHeader(){
   }
   thead.innerHTML = html;
 
-  // 點表頭排序：升冪 → 降冪 → 取消
   thead.onclick = (e) => {
     const el = e.target.closest("[data-sort-key]");
     if(!el) return;
@@ -830,7 +953,6 @@ function getSortVal(r, key){
 function applyFilterSortRender(keepScroll=false){
   const prevTop = $("viewport").scrollTop;
 
-  // 篩選
   const uids = [];
   for(let uid=0; uid<base.length; uid++){
     const r = base[uid];
@@ -839,7 +961,6 @@ function applyFilterSortRender(keepScroll=false){
     uids.push(uid);
   }
 
-  // 排序
   if(sortKey && sortDir){
     const sign = (sortDir === "asc") ? 1 : -1;
     uids.sort((a,b)=>{
