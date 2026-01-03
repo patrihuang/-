@@ -494,24 +494,16 @@
   </div>
 </div>
 
+<!-- ✅ 一定要先載入資料 -->
 <script src="./songs.js"></script>
 
-
+<!-- ✅ 你的主程式 JS，一定要整段包在 script 裡 -->
 <script>
-/**
- * ✅ 資料格式（含 len 變數）
- * { who:"", id:"920833", title:"真情磅無中", artist:"鐵澄", lang:"台語", page:"第071頁", len:"1" }
- */
-
 if (!window.SONGS || !Array.isArray(window.SONGS)) {
-  alert("songs.js 載入失敗：請確認 songs.js 跟 index.html 在同一層，且內容是 window.SONGS = [...]");
+  alert("songs.js 載入失敗，請確認檔案存在");
   throw new Error("SONGS not found");
 }
 const SONGS = window.SONGS;
-
-
-
-
 
 // ===== 小工具 =====
 const $ = (id) => document.getElementById(id);
@@ -520,9 +512,16 @@ const toast = (msg, sub="") => {
   $("toastSub").textContent = sub;
   $("toast").classList.add("show");
   clearTimeout(window.__toastTimer);
-  window.__toastTimer = setTimeout(()=> $("toast").classList.remove("show"), 2000);
+  window.__toastTimer = setTimeout(
+    () => $("toast").classList.remove("show"),
+    2000
+  );
 };
-function normalize(s){ return (s ?? "").toString().toLowerCase().trim(); }
+
+function normalize(s){
+  return (s ?? "").toString().toLowerCase().trim();
+}
+
 function escapeHtml(s){
   return (s ?? "").toString()
     .replaceAll("&","&amp;")
@@ -531,6 +530,8 @@ function escapeHtml(s){
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
+
+
 async function copyToClipboard(text){
   try{ await navigator.clipboard.writeText(text); }
   catch(_){
