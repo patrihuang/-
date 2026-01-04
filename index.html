@@ -44,6 +44,9 @@
       /* ✅ RWD：更小螢幕時，縮窄固定欄位（仍然「像」10 碼寬） */
       --colFixedSm: 8ch;
 
+      /* ✅ 置頂用：由 JS 量測 header 高度後寫入 */
+      --headerH: 0px;
+
       font-synthesis-weight:none;
     }
 
@@ -75,7 +78,7 @@
 
     .wrap{max-width:1100px; margin:16px auto; padding:0 14px;}
 
-    /* ✅ Header：RWD 可換行 */
+    /* ✅ Header：置頂（固定在最上面） */
     header{
       display:flex;
       align-items:flex-end;
@@ -83,6 +86,15 @@
       gap:12px;
       margin-bottom:10px;
       flex-wrap:wrap;
+
+      position: sticky;
+      top: 0;
+      z-index: 5000;
+
+      /* 讓置頂時背後不透出 */
+      padding: 14px 0 10px 0;
+      background:linear-gradient(180deg, var(--bgTop), var(--bgMid) 40%, var(--bgBot));
+      backdrop-filter: blur(10px);
     }
 
     h1{margin:0; font-size:1.35rem; letter-spacing:.5px}
@@ -124,6 +136,7 @@
       box-shadow:0 10px 30px rgba(15,23,42,.10);
     }
 
+    /* ✅ Toolbar：也置頂（貼在 header 下方） */
     .toolbar{
       display:flex;
       gap:.6rem;
@@ -131,6 +144,16 @@
       border-bottom:1px solid var(--line);
       align-items:center;
       flex-wrap:wrap;
+
+      position: sticky;
+      top: var(--headerH);
+      z-index: 4500;
+
+      background: rgba(0,0,0,.14);
+      backdrop-filter: blur(10px);
+    }
+    html[data-theme="light"] .toolbar{
+      background: rgba(255,255,255,.72);
     }
 
     label{font-size:.78rem; color:var(--muted)}
@@ -151,6 +174,7 @@
       background:rgba(255,255,255,.95);
       border:1px solid rgba(15,23,42,.14);
     }
+
     input{min-width: 12rem;}
     input::placeholder{color:#7e8a96}
     html[data-theme="light"] input::placeholder{color:#64748b}
@@ -217,11 +241,29 @@
     .settingsBtn svg{width:1.15rem; height:1.15rem}
 
     .left{
-      display:flex; gap:.6rem; flex-wrap:wrap; align-items:center;
+      display:flex;
+      gap:.6rem;
+      flex-wrap:wrap;
+      align-items:center;
       flex: 1 1 auto;
       min-width: 0;
     }
 
+    /* ✅ 搜尋列：查詢/🔍/× 永遠同一橫排 */
+    .searchRow{
+      display:flex;
+      align-items:center;
+      gap:.6rem;
+      flex: 1 1 28rem;
+      min-width: 0;
+      flex-wrap: nowrap;
+    }
+    .searchRow input{
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    /* ✅ 篩選列：預設橫排（大螢幕） */
     .filtersRow{
       display:flex;
       gap:.6rem;
@@ -230,6 +272,16 @@
       justify-content:flex-start;
       min-width: 0;
     }
+
+    /* ✅ 每一組篩選：label + select */
+    .filterItem{
+      display:inline-flex;
+      align-items:center;
+      gap:.45rem;
+      min-width: 0;
+    }
+    .filterItem label{white-space:nowrap}
+    .filterItem select{min-width: 7rem}
 
     /* ✅ 設定內容：改成 modal */
     .settingsGrid{
@@ -497,12 +549,63 @@
       :root{ --colFixed: var(--colFixedSm); }
       .table-min-width{min-width: 460px}
     }
+
+    /* ✅ 小螢幕：要求的 1/2/3 */
     @media (max-width: 520px){
       h1{font-size:1.15rem}
       .sub{font-size:.78rem}
-      input{flex: 1 1 12rem; min-width: 12rem;}
-      .filtersRow{width:100%}
-      .filtersRow select{flex: 1 1 7rem; min-width: 7rem;}
+
+      /* ✅ 等比例縮小（搜尋/🔍/× 仍同一列） */
+      :root{
+        --ctlH: 2.35rem;
+        --ctlPadY: .42rem;
+        --ctlPadX: .55rem;
+      }
+      .btn{font-size:.88rem}
+      .iconBtn svg{width:1.05rem; height:1.05rem}
+      .xBtn{font-size:1.00rem}
+
+      /* ✅ 每一行都一樣寬：left 改成直向堆疊 */
+      .left{
+        width:100%;
+        flex-direction:column;
+        align-items:stretch;
+      }
+
+      /* ✅ 搜尋列仍同一橫排 */
+      .searchRow{
+        width:100%;
+        flex: 0 0 auto;
+        gap:.5rem;
+      }
+      .searchRow input{
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      /* ✅ 篩選改垂直排列、且每一行同寬 */
+      .filtersRow{
+        width:100%;
+        flex-direction:column;
+        align-items:stretch;
+        gap:.55rem;
+      }
+      .filterItem{
+        width:100%;
+        display:flex;
+        flex-direction:column;
+        align-items:stretch;
+        gap:.35rem;
+      }
+      .filterItem label{
+        font-size:.78rem;
+        color:var(--muted);
+      }
+      .filterItem select{
+        width:100%;
+        min-width: 0;
+      }
+
       .toolbar{padding:.55rem .6rem;}
       .thead{padding:.55rem .6rem;}
       .rows{padding:0 .6rem .5rem .6rem;}
@@ -513,7 +616,7 @@
 
 <body>
 <div class="wrap">
-  <header>
+  <header id="topHeader">
     <div>
       <h1>二結點歌本速查</h1>
       <div class="sub">>Happy Happy</div>
@@ -533,26 +636,36 @@
   </header>
 
   <div class="card">
-    <div class="toolbar">
+    <div class="toolbar" id="toolbar">
       <div class="left">
-        <input id="q" placeholder="查詢（點🔍）" />
-        <button class="btn primary iconBtn" id="btnFilter" title="套用文字查詢" aria-label="套用文字查詢">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
-            <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <button class="btn xBtn" id="btnClearFilters" title="取消篩選/清空" aria-label="取消篩選">×</button>
+        <!-- ✅ 查詢列：永遠同一橫排（小螢幕也不會換行） -->
+        <div class="searchRow">
+          <input id="q" placeholder="查詢（點🔍）" />
+          <button class="btn primary iconBtn" id="btnFilter" title="套用文字查詢" aria-label="套用文字查詢">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="btn xBtn" id="btnClearFilters" title="取消篩選/清空" aria-label="取消篩選">×</button>
+        </div>
 
+        <!-- ✅ 篩選：大螢幕橫排、小螢幕直排（垂直排列） -->
         <div class="filtersRow">
-          <label>語言</label>
-          <select id="filterLang"></select>
+          <div class="filterItem">
+            <label for="filterLang">語言</label>
+            <select id="filterLang"></select>
+          </div>
 
-          <label>字數</label>
-          <select id="filterLen"></select>
+          <div class="filterItem">
+            <label for="filterLen">字數</label>
+            <select id="filterLen"></select>
+          </div>
 
-          <label>誰的歌</label>
-          <select id="filterWho"></select>
+          <div class="filterItem">
+            <label for="filterWho">誰的歌</label>
+            <select id="filterWho"></select>
+          </div>
         </div>
       </div>
     </div>
@@ -727,6 +840,12 @@ function measureVarPx(varName){
   return px;
 }
 
+/* ✅ 置頂：量測 header 高度，讓 toolbar 緊貼在 header 下方 */
+function updateDockHeights(){
+  const h = $("topHeader")?.offsetHeight || 0;
+  document.documentElement.style.setProperty("--headerH", h + "px");
+}
+
 /* ✅ 設定 Modal 開關 */
 function openSettings(){
   $("settingsBack").classList.add("show");
@@ -773,6 +892,9 @@ function init(){
   // 套用主題
   const theme = getTheme();
   setTheme(theme);
+
+  // ✅ 先量測置頂高度
+  updateDockHeights();
 
   // 同步 row height
   ROW_H = getRowHPx();
@@ -872,6 +994,7 @@ function bindUI(){
   $("toggleLight").addEventListener("change", () => {
     setTheme($("toggleLight").checked ? "light" : "dark");
     // 主題切換後，10ch 的 px 會變（因字體渲染），重算 min-width + rowH
+    updateDockHeights();
     ROW_H = getRowHPx();
     rebuildColumnsAndHeader();
     applyFilterSortRender(true);
@@ -917,6 +1040,7 @@ function bindUI(){
 
   $("viewport").addEventListener("scroll", () => render());
   window.addEventListener("resize", () => {
+    updateDockHeights();
     ROW_H = getRowHPx();
     rebuildColumnsAndHeader(); // ✅ RWD 造成 ch/rem 變化時，重算 minWidth
     render();
