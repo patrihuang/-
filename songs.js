@@ -4098,7 +4098,7 @@ window.SONGS = [
   { who:"", id:"914801", title:"夢不落", artist:"孫燕姿", lang:"國語", page:"P.045", len:"3", book:"原聲原影" },
   { who:"", id:"910238", title:"夢中人", artist:"周蕙", lang:"國語", page:"P.045", len:"3", book:"原聲原影" },
   { who:"", id:"922530", title:"夢中花", artist:"吳淑敏", lang:"國語", page:"P.045", len:"3", book:"原聲原影" },
-  { who:"合唱", id:"927610", title:"夢中夢", artist:"熊仔、宋念宇", lang:"國語", page:"P.045", len:"3", book:"原聲原影" },
+  { who:"", id:"927610", title:"夢中夢", artist:"熊仔、宋念宇", lang:"國語", page:"P.045", len:"3", book:"原聲原影" },
   { who:"", id:"921872", title:"夢天堂", artist:"馨言", lang:"國語", page:"P.045", len:"3", book:"原聲原影" },
   { who:"", id:"920540", title:"夢交響", artist:"丁噹", lang:"國語", page:"P.045", len:"3", book:"原聲原影" },
   { who:"", id:"920883", title:"夢紅樓", artist:"李翊君", lang:"國語", page:"P.045", len:"3", book:"原聲原影" },
@@ -18835,5 +18835,4 @@ window.SONGS = [
 
   // 👉 你後面直接繼續貼 20000 筆在這裡
 ];
-
 
