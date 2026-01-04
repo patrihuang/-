@@ -152,6 +152,17 @@
       border:1px solid rgba(15,23,42,.14);
     }
 
+    /* ✅ 修正：checkbox / radio 不要吃到一般 input 的 padding/height（會導致某些寬度下看起來像「不見」） */
+    input[type="checkbox"],
+    input[type="radio"]{
+      height:auto;
+      padding:0;
+      border:none;
+      background:transparent;
+      border-radius:0;
+      min-width:auto;
+    }
+
     input{min-width: 12rem;}
     input::placeholder{color:#7e8a96}
     html[data-theme="light"] input::placeholder{color:#64748b}
@@ -564,6 +575,7 @@
       gap:.75rem;
       flex-wrap:wrap;
       align-items:center;
+      min-width: 0;
     }
 
     /* ✅ A) 顯示欄位：標題獨立一行，選項下一行 */
@@ -585,12 +597,13 @@
       gap:.55rem .75rem;
       align-items:center;
       width:100%;
+      min-width:0;
     }
 
-    /* ✅ B) 讓「核取方塊欄位」只占方塊大小，其它空間給文字 */
+    /* ✅ B) tick：checkbox/radio 欄位只占方塊大小，其它空間給文字 */
     .tick{
       display:grid;
-      grid-template-columns: 1.15rem 1fr; /* ✅ checkbox 固定寬度 */
+      grid-template-columns: 1.15rem 1fr;
       align-items:center;
       column-gap:.45rem;
 
@@ -602,8 +615,11 @@
       font-size:.78rem;
       cursor:pointer;
       user-select:none;
-      white-space:nowrap;
+
+      /* 讓後面文字可以吃空間（需要時也可換行） */
+      white-space:normal;
       min-width: 0;
+      max-width: 100%;
     }
     html[data-theme="light"] .tick{
       border:1px solid rgba(15,23,42,.12);
@@ -615,12 +631,27 @@
       margin:0;
       accent-color: var(--accent);
       justify-self:start;
+      flex: 0 0 auto;
     }
     .tick span{
       color:#cdd6e1;
       min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
     html[data-theme="light"] .tick span{color:#0f172a}
+
+    /* ✅ 比對方式：容器保留，但每個選項用 tick 風格（radio 也可用） */
+    .radioWrap{
+      display:flex;
+      align-items:center;
+      gap:.55rem;
+      flex-wrap:wrap;
+      min-width:0;
+    }
+    .radioWrap .tick{
+      border-radius:999px;
+    }
 
     /* 保留原本 chip（其他地方仍可用） */
     .chip{
@@ -641,29 +672,6 @@
     .chip input{width:1rem; height:1rem; margin:0; accent-color: var(--accent);}
     .chip span{color:#cdd6e1}
     html[data-theme="light"] .chip span{color:#0f172a}
-
-    .radioWrap{
-      display:flex;
-      align-items:center;
-      gap:.7rem;
-      padding:.35rem .6rem;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.05);
-      border-radius:999px;
-      flex-wrap:wrap;
-    }
-    html[data-theme="light"] .radioWrap{
-      border:1px solid rgba(15,23,42,.12);
-      background:rgba(255,255,255,.65);
-    }
-    .radioWrap label{
-      display:flex; align-items:center; gap:.45rem;
-      color:var(--muted);
-      font-size:.85rem;
-      cursor:pointer;
-      user-select:none;
-    }
-    .radioWrap input{width:1.05rem; height:1.05rem; accent-color:var(--accent)}
 
     /* ✅ RWD */
     @media (max-width: 900px){
@@ -848,24 +856,26 @@
             </div>
           </div>
 
-          <div class="settingsSection">
-            <span style="color:var(--muted); font-size:.85rem;">比對方式：</span>
+          <!-- ✅ (1) 比對方式：每個選項的「核取方塊欄位」固定為方塊大小 -->
+          <div class="settingsSection" style="align-items:flex-start;">
+            <span style="color:var(--muted); font-size:.85rem; padding-top:.15rem;">比對方式：</span>
             <div class="radioWrap" role="group" aria-label="比對方式">
-              <label>
+              <label class="tick" title="多關鍵字：每個字都要包含（適合快速縮小範圍）">
                 <input type="radio" name="matchMode" id="modeFuzzy" value="fuzzy" checked>
                 <span>模糊比對</span>
               </label>
-              <label>
+              <label class="tick" title="整段字串：完全照輸入內容去找（適合精準關鍵字）">
                 <input type="radio" name="matchMode" id="modeExact" value="exact">
                 <span>精準比對</span>
               </label>
             </div>
           </div>
 
+          <!-- ✅ (1) 淺色模式：改用 tick，checkbox 欄位固定方塊大小，文字吃剩下空間 -->
           <div class="settingsSection">
-            <label class="chip" title="切換淺色模式（會記住）">
+            <label class="tick" title="切換淺色模式（會記住）" style="max-width:100%;">
               <input type="checkbox" id="toggleLight" />
-              <span>淺色模式</span>
+              <span>淺色模式（會記住）</span>
             </label>
           </div>
 
