@@ -224,20 +224,20 @@
     }
     .settingsBtn svg{width:1.15rem; height:1.15rem}
 
-    /* ✅ (1)(2)：「查詢」那行獨立 + 只置頂查詢列 */
-    .searchDock{
+    /* ✅ 搜尋列：移到篩選面板的「上方新區塊」並置頂 */
+    .filtersTop{
       position: sticky;
       top: var(--headerH);
       z-index: 5500;
 
-      /* ✅ 更緊密：縮小 padding */
+      /* ✅ 更緊密 */
       padding: .35rem .5rem;
-      border-bottom:1px solid var(--line);
+      border-bottom: 1px solid var(--line);
 
       background: rgba(0,0,0,.14);
       backdrop-filter: blur(10px);
     }
-    html[data-theme="light"] .searchDock{
+    html[data-theme="light"] .filtersTop{
       background: rgba(255,255,255,.72);
     }
 
@@ -250,7 +250,7 @@
       min-width:0;
     }
 
-    /* ✅ C：搜尋至少一半寬度；其他三個平均吃剩下 */
+    /* ✅ 搜尋至少一半寬度；其他三個平均吃剩下 */
     .searchRow input{
       flex: 3 1 0;       /* 3 / (3+1+1+1) = 50% */
       min-width: 0;
@@ -262,21 +262,19 @@
       padding-left: 0;    /* ✅ 讓按鈕更像均分格子 */
       padding-right: 0;
     }
-    /* ✅ 讓原本固定寬度的 iconBtn / xBtn 在 searchRow 內也能均分 */
     .searchRow .iconBtn,
     .searchRow .xBtn{
       width:auto;
     }
 
-    /* ✅ A：篩選區：與查詢列緊密、不置頂、可自由滑動 */
+    /* ✅ 篩選區：去掉上方多餘空間（padding 改為 0） */
     .filtersArea{
-      padding: .35rem .5rem;    /* ✅ 更緊密 */
+      padding: 0;                 /* ✅ 去除多餘空間 */
       border-bottom: 1px solid var(--line);
     }
 
     /* ✅ B：極小的「篩選」收合按鈕 */
     .collapseBtn{
-      /* 在 searchRow 內已被均分寬度；這裡把內距縮到最小 */
       padding: 0;
       border-radius:12px;
       font-weight:900;
@@ -285,16 +283,21 @@
     .collapseBtn svg{ width:1.15rem; height:1.15rem; transition: .18s transform; }
     .collapseBtn[aria-expanded="false"] svg{ transform: rotate(-90deg); }
     .collapseBtn .t{
-      display:none; /* ✅ 直接隱藏文字：變成「小小的按鈕」 */
+      display:none;
     }
 
     .filtersBody{
       overflow:hidden;
       max-height: 600px;
       transition: max-height .22s ease;
+
+      /* ✅ 把 padding 放到 body 裡，讓頂部更乾淨、也跟收合一起收起來 */
+      padding: .35rem .5rem;
     }
     .filtersBody.collapsed{
       max-height: 0px;
+      padding-top: 0;
+      padding-bottom: 0;
     }
 
     /* ✅ 篩選列：預設橫排（大螢幕） */
@@ -662,33 +665,32 @@
     </header>
 
     <div class="card">
-      <!-- ✅ 只置頂「查詢」那行 -->
-      <div class="searchDock" id="searchDock">
-        <div class="searchRow">
-          <input id="q" placeholder="查詢（點🔍）" />
-
-          <!-- ✅ 三個按鈕會在同一列、平均分剩下空間 -->
-          <button class="btn primary" id="btnFilter" title="套用文字查詢" aria-label="套用文字查詢">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" style="width:1.15rem;height:1.15rem">
-              <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </button>
-
-          <button class="btn xBtn" id="btnClearFilters" title="取消篩選/清空" aria-label="取消篩選">×</button>
-
-          <!-- ✅ B：極小收合按鈕（只保留圖示） -->
-          <button class="btn collapseBtn" id="btnToggleFilters" aria-expanded="true" title="收合/展開篩選" aria-label="收合/展開篩選">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M8 10l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span class="t">篩選</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- ✅ 篩選區：不置頂，跟著內容滑動 -->
+      <!-- ✅ 篩選區（內含：搜尋上方新面板 + 下拉篩選） -->
       <div class="filtersArea" id="filtersArea">
+        <!-- ✅ 新增：篩選面板上方的搜尋區塊（置頂） -->
+        <div class="filtersTop" id="filtersTop">
+          <div class="searchRow">
+            <input id="q" placeholder="查詢（點🔍）" />
+
+            <button class="btn primary" id="btnFilter" title="套用文字查詢" aria-label="套用文字查詢">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" style="width:1.15rem;height:1.15rem">
+                <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+
+            <button class="btn xBtn" id="btnClearFilters" title="取消篩選/清空" aria-label="取消篩選">×</button>
+
+            <button class="btn collapseBtn" id="btnToggleFilters" aria-expanded="true" title="收合/展開篩選" aria-label="收合/展開篩選">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M8 10l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="t">篩選</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ✅ 下拉篩選（可收合） -->
         <div class="filtersBody" id="filtersBody">
           <div class="filtersRow">
             <div class="filterItem">
