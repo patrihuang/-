@@ -222,7 +222,7 @@
 
     /* ✅ 搜尋列：取消置頂（不 sticky） + 與下拉篩選同一個 layout */
     .filtersTop{
-      position: relative;          /* ✅ 不置頂 */
+      position: relative;
       z-index: 1;
 
       padding: .40rem .5rem .18rem .5rem;
@@ -246,7 +246,7 @@
 
     /* ✅ 搜尋至少一半寬度；其他三個平均吃剩下 */
     .searchRow input{
-      flex: 3 1 0;       /* 3 / (3+1+1+1) = 50% */
+      flex: 3 1 0;
       min-width: 0;
     }
     .searchRow .btn{
@@ -261,13 +261,11 @@
       width:auto;
     }
 
-    /* ✅ 篩選區：去掉上方多餘空間 */
     .filtersArea{
       padding: 0;
       border-bottom: 1px solid var(--line);
     }
 
-    /* ✅ B：極小的「篩選」收合按鈕 */
     .collapseBtn{
       padding: 0;
       border-radius:12px;
@@ -278,9 +276,8 @@
     .collapseBtn[aria-expanded="false"] svg{ transform: rotate(-90deg); }
     .collapseBtn .t{ display:none; }
 
-    /* ✅ 下拉篩選：同 layout（緊接在搜尋列下方），且不 sticky */
     .filtersBody{
-      position: relative;          /* ✅ 不置頂 */
+      position: relative;
       z-index: 1;
 
       background: rgba(0,0,0,.08);
@@ -304,7 +301,6 @@
       border-bottom: 0;
     }
 
-    /* ✅ 篩選列：預設橫排（大螢幕） */
     .filtersRow{
       display:flex;
       gap:.45rem;
@@ -523,17 +519,17 @@
       border:1px solid rgba(15,23,42,.12);
     }
 
-    /* ✅ (2) 詳細資訊欄位 1:3 */
+    /* ✅ 詳細資訊欄位 1:3 */
     .modalBody{
       padding:.65rem .75rem;
       display:grid;
-      grid-template-columns: minmax(5.2rem, 1fr) 3fr; /* ✅ 1:3 */
+      grid-template-columns: minmax(5.2rem, 1fr) 3fr;
       gap:.5rem .6rem;
       font-size:.9rem;
 
-      flex: 1 1 auto;          /* ✅ 讓 body 吃中間空間 */
-      overflow:auto;           /* ✅ 超過一頁時可捲動 */
-      min-height: 0;           /* ✅ 讓 overflow 生效（flex 子元素必備） */
+      flex: 1 1 auto;
+      overflow:auto;
+      min-height: 0;
     }
     .k{color:var(--muted); font-size:.85rem}
     .v{color:var(--text); word-break:break-word}
@@ -562,6 +558,7 @@
       flex-direction:column;
       gap:.75rem;
     }
+
     .settingsSection{
       display:flex;
       gap:.75rem;
@@ -569,6 +566,63 @@
       align-items:center;
     }
 
+    /* ✅ A) 顯示欄位：標題獨立一行，選項下一行 */
+    .settingsSection.block{
+      flex-direction:column;
+      align-items:stretch;
+      gap:.45rem;
+    }
+    .settingsTitleRow{
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      color:var(--muted);
+      font-size:.85rem;
+    }
+    .settingsOptionsRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.55rem .75rem;
+      align-items:center;
+      width:100%;
+    }
+
+    /* ✅ B) 讓「核取方塊欄位」只占方塊大小，其它空間給文字 */
+    .tick{
+      display:grid;
+      grid-template-columns: 1.15rem 1fr; /* ✅ checkbox 固定寬度 */
+      align-items:center;
+      column-gap:.45rem;
+
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      padding:.35rem .6rem;
+      border-radius:999px;
+
+      font-size:.78rem;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+      min-width: 0;
+    }
+    html[data-theme="light"] .tick{
+      border:1px solid rgba(15,23,42,.12);
+      background:rgba(255,255,255,.65);
+    }
+    .tick input{
+      width:1.15rem;
+      height:1.15rem;
+      margin:0;
+      accent-color: var(--accent);
+      justify-self:start;
+    }
+    .tick span{
+      color:#cdd6e1;
+      min-width:0;
+    }
+    html[data-theme="light"] .tick span{color:#0f172a}
+
+    /* 保留原本 chip（其他地方仍可用） */
     .chip{
       display:inline-flex; align-items:center; gap:.45rem;
       border:1px solid rgba(255,255,255,.12);
@@ -585,7 +639,6 @@
       background:rgba(255,255,255,.65);
     }
     .chip input{width:1rem; height:1rem; margin:0; accent-color: var(--accent);}
-
     .chip span{color:#cdd6e1}
     html[data-theme="light"] .chip span{color:#0f172a}
 
@@ -617,7 +670,7 @@
       .wrap{margin:12px auto; padding:0 12px;}
       header{align-items:flex-start;}
       input{min-width: 10rem}
-      .modalBody{ grid-template-columns: minmax(4.6rem, 1fr) 3fr; } /* ✅ 仍維持 1:3 */
+      .modalBody{ grid-template-columns: minmax(4.6rem, 1fr) 3fr; }
       :root{ --colFixed: var(--colFixedSm); }
       .table-min-width{min-width: 460px}
     }
@@ -626,7 +679,6 @@
       h1{font-size:1.15rem}
       .sub{font-size:.78rem}
 
-      /* ✅ 等比例縮小（查詢列仍同一列） */
       :root{
         --ctlH: 2.35rem;
         --ctlPadY: .42rem;
@@ -636,7 +688,6 @@
       .iconBtn svg{width:1.05rem; height:1.05rem}
       .xBtn{font-size:1.00rem}
 
-      /* ✅ 篩選改垂直排列、且每一行同寬 */
       .filtersRow{
         width:100%;
         flex-direction:column;
@@ -663,10 +714,7 @@
       .rows{padding:0 .6rem .5rem .6rem;}
       .table-min-width{min-width: 420px}
 
-      /* ✅ 小螢幕時詳細資料改直式更好讀（仍符合 1:3 精神） */
-      .modalBody{
-        grid-template-columns: 1fr;
-      }
+      .modalBody{ grid-template-columns: 1fr; }
       .k{margin-top:.35rem}
       .v{padding-bottom:.35rem; border-bottom:1px dashed rgba(255,255,255,.10)}
       html[data-theme="light"] .v{border-bottom:1px dashed rgba(15,23,42,.14)}
@@ -694,10 +742,7 @@
     </header>
 
     <div class="card">
-      <!-- ✅ 篩選區（同一個 layout：上=搜尋，下=語言/字數/誰的歌） -->
       <div class="filtersArea" id="filtersArea">
-
-        <!-- ✅ 搜尋（不置頂；在同一個 layout 的最上面） -->
         <div class="filtersTop" id="filtersTop">
           <div class="searchRow">
             <input id="q" placeholder="查詢（點🔍）" />
@@ -720,7 +765,6 @@
           </div>
         </div>
 
-        <!-- ✅ 下拉篩選（可收合；同 layout 緊接在搜尋下面） -->
         <div class="filtersBody" id="filtersBody">
           <div class="filtersRow">
             <div class="filterItem">
@@ -754,7 +798,6 @@
     </div>
   </div>
 
-  <!-- ✅ (4) 滑動至頂部 -->
   <button class="btn iconBtn toTop" id="btnToTop" title="滑到頂部" aria-label="滑到頂部">
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M12 5l7 7M12 5L5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -793,13 +836,16 @@
       <div class="settingsBody">
         <div class="settingsGrid">
 
-          <div class="settingsSection">
-            <span style="color:var(--muted); font-size:.85rem;">顯示欄位：</span>
-            <label class="chip"><input type="checkbox" id="colLang" /><span>語言</span></label>
-            <label class="chip"><input type="checkbox" id="colLen" /><span>字數</span></label>
-            <label class="chip"><input type="checkbox" id="colWho" /><span>誰的歌</span></label>
-            <label class="chip"><input type="checkbox" id="colPage" /><span>頁數</span></label>
-            <label class="chip"><input type="checkbox" id="colBook" /><span>歌本</span></label>
+          <!-- ✅ 顯示欄位：標題一行、選項下一行；checkbox 只占方塊大小 -->
+          <div class="settingsSection block">
+            <div class="settingsTitleRow">顯示欄位：</div>
+            <div class="settingsOptionsRow">
+              <label class="tick"><input type="checkbox" id="colLang" /><span>語言</span></label>
+              <label class="tick"><input type="checkbox" id="colLen" /><span>字數</span></label>
+              <label class="tick"><input type="checkbox" id="colWho" /><span>誰的歌</span></label>
+              <label class="tick"><input type="checkbox" id="colPage" /><span>頁數</span></label>
+              <label class="tick"><input type="checkbox" id="colBook" /><span>歌本</span></label>
+            </div>
           </div>
 
           <div class="settingsSection">
@@ -841,17 +887,11 @@
   ;(() => {
     "use strict";
 
-    // =========================
-    // 0) Boot guard
-    // =========================
     if (!window.SONGS || !Array.isArray(window.SONGS)) {
       alert("songs.js 載入失敗，請確認檔案存在");
       throw new Error("SONGS not found");
     }
 
-    // =========================
-    // 1) Constants / Schema
-    // =========================
     const SONGS = window.SONGS;
 
     const KEYS = Object.freeze({
@@ -881,9 +921,6 @@
       { key:"book", label:"歌本",  sortable:true, widthVar:"--colWho" },
     ]);
 
-    // =========================
-    // 2) DOM helpers (UI layer)
-    // =========================
     const UI = (() => {
       const $ = (id) => document.getElementById(id);
 
@@ -913,7 +950,6 @@
         toastMsg: $("toastMsg"),
         toastSub: $("toastSub"),
 
-        // modals
         modalBack: $("modalBack"),
         modalTitle: $("modalTitle"),
         modalBody: $("modalBody"),
@@ -921,7 +957,6 @@
         modalClose2: $("modalClose2"),
         modalCopy: $("modalCopy"),
 
-        // settings modal
         btnSettings: $("btnSettings"),
         settingsBack: $("settingsBack"),
         settingsClose: $("settingsClose"),
@@ -955,9 +990,6 @@
       return { $, els, toast, escapeHtml, normalize };
     })();
 
-    // =========================
-    // 3) Storage (persistence)
-    // =========================
     const Storage = (() => {
       const safeGet = (k, fallback=null) => {
         try { return localStorage.getItem(k) ?? fallback; } catch(_) { return fallback; }
@@ -978,9 +1010,6 @@
       return { safeGet, safeSet, safeGetJSON, safeSetJSON };
     })();
 
-    // =========================
-    // 4) Theme service
-    // =========================
     const Theme = (() => {
       const apply = (theme) => {
         if(theme === "light") document.documentElement.setAttribute("data-theme","light");
@@ -991,9 +1020,6 @@
       return { apply, read };
     })();
 
-    // =========================
-    // 5) Metrics (CSS var -> px)
-    // =========================
     const Metrics = (() => {
       const measureCssVarPx = (varName) => {
         const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
@@ -1019,18 +1045,11 @@
         return Math.max(24, Math.round(px));
       };
 
-      // ✅ 仍保留（未來如果你又想做置頂，可直接恢復）
-      const updateDockHeights = () => {
-        // no-op-ish for now
-        void 0;
-      };
+      const updateDockHeights = () => { void 0; };
 
       return { measureCssVarPx, getRowHPx, updateDockHeights };
     })();
 
-    // =========================
-    // 6) Clipboard
-    // =========================
     const Clipboard = (() => {
       const copy = async (text) => {
         try {
@@ -1047,9 +1066,6 @@
       return { copy };
     })();
 
-    // =========================
-    // 7) App State (single source of truth)
-    // =========================
     const State = {
       base: [],
       copyLine: [],
@@ -1063,9 +1079,6 @@
       modalUID: null,
     };
 
-    // =========================
-    // 8) Data preparation
-    // =========================
     const Data = (() => {
       const normalizeRow = (r) => ({
         who: (r.who ?? "").toString().trim(),
@@ -1086,9 +1099,6 @@
       return { build };
     })();
 
-    // =========================
-    // 9) Filters / Options
-    // =========================
     const FilterOptions = (() => {
       const uniqueValues = (key) => {
         const set = new Set();
@@ -1123,9 +1133,6 @@
       return { build };
     })();
 
-    // =========================
-    // 10) Column config / Header / Grid
-    // =========================
     const Columns = (() => {
       const loadShown = () => {
         const obj = Storage.safeGetJSON(KEYS.SHOWN, null);
@@ -1208,9 +1215,6 @@
       return { loadShown, saveShown, getActiveCols, rebuild, toggleSort };
     })();
 
-    // =========================
-    // 11) Query / Sort logic
-    // =========================
     const Query = (() => {
       const currentMatchMode = () =>
         document.querySelector('input[name="matchMode"]:checked')?.value || "fuzzy";
@@ -1303,9 +1307,6 @@
       return { apply };
     })();
 
-    // =========================
-    // 12) Virtual list renderer
-    // =========================
     const VirtualList = (() => {
       const updateSpacer = () => {
         UI.els.spacer.style.height = (State.viewUIDs.length * State.ROW_H + 8) + "px";
@@ -1378,9 +1379,6 @@
       return { updateSpacer, render };
     })();
 
-    // =========================
-    // 13) Modals
-    // =========================
     const Modal = (() => {
       const openDetail = (uid) => {
         const r = State.base[uid];
@@ -1429,9 +1427,6 @@
       return { openDetail, closeDetail, openSettings, closeSettings };
     })();
 
-    // =========================
-    // 14) UX helpers (collapse + toTop)
-    // =========================
     const UX = (() => {
       const setFiltersCollapsed = (collapsed) => {
         State.filtersCollapsed = !!collapsed;
@@ -1445,9 +1440,7 @@
         }, 260);
       };
 
-      const toggleFilters = () => {
-        setFiltersCollapsed(!State.filtersCollapsed);
-      };
+      const toggleFilters = () => setFiltersCollapsed(!State.filtersCollapsed);
 
       const scrollToTop = () => {
         UI.els.viewport?.scrollTo({ top: 0, behavior: "smooth" });
@@ -1463,9 +1456,6 @@
       return { setFiltersCollapsed, toggleFilters, scrollToTop, updateToTopVisible };
     })();
 
-    // =========================
-    // 15) Settings sync (UI <-> State)
-    // =========================
     const Settings = (() => {
       const syncToUI = () => {
         const theme = Theme.read();
@@ -1496,12 +1486,8 @@
       return { syncToUI, handleThemeToggle, handleShownToggle };
     })();
 
-    // =========================
-    // 16) Event bindings
-    // =========================
     const Events = (() => {
       const bind = () => {
-        // settings modal
         UI.els.btnSettings.addEventListener("click", Modal.openSettings);
         UI.els.settingsClose.addEventListener("click", Modal.closeSettings);
         UI.els.settingsDone.addEventListener("click", Modal.closeSettings);
@@ -1509,19 +1495,15 @@
           if(e.target === UI.els.settingsBack) Modal.closeSettings();
         });
 
-        // theme
         UI.els.toggleLight.addEventListener("change", Settings.handleThemeToggle);
 
-        // filter collapse
         UI.els.btnToggleFilters.addEventListener("click", () => {
           UX.toggleFilters();
           UI.toast(State.filtersCollapsed ? "已收合篩選" : "已展開篩選");
         });
 
-        // to top
         UI.els.btnToTop.addEventListener("click", UX.scrollToTop);
 
-        // query input
         UI.els.q.addEventListener("keydown", (e) => {
           if(e.key === "Enter"){
             Query.apply();
@@ -1536,7 +1518,6 @@
           UI.toast("已套用篩選", `顯示 ${State.viewUIDs.length.toLocaleString()} 筆`);
         });
 
-        // clear
         UI.els.btnClearFilters.addEventListener("click", () => {
           UI.els.q.value = "";
           State.filters.lang = State.filters.len = State.filters.who = "";
@@ -1549,19 +1530,16 @@
           UI.toast("已清空", "文字/下拉/排序 已重置");
         });
 
-        // dropdown filters
         UI.els.filterLang.addEventListener("change", () => { State.filters.lang = UI.els.filterLang.value; Query.apply(); });
         UI.els.filterLen.addEventListener("change",  () => { State.filters.len  = UI.els.filterLen.value;  Query.apply(); });
         UI.els.filterWho.addEventListener("change",  () => { State.filters.who  = UI.els.filterWho.value;  Query.apply(); });
 
-        // shown columns
         UI.els.colLang.addEventListener("change", () => Settings.handleShownToggle("lang", UI.els.colLang.checked));
         UI.els.colLen.addEventListener("change",  () => Settings.handleShownToggle("len",  UI.els.colLen.checked));
         UI.els.colWho.addEventListener("change",  () => Settings.handleShownToggle("who",  UI.els.colWho.checked));
         UI.els.colPage.addEventListener("change", () => Settings.handleShownToggle("page", UI.els.colPage.checked));
         UI.els.colBook.addEventListener("change", () => Settings.handleShownToggle("book", UI.els.colBook.checked));
 
-        // sorting header (event delegation)
         UI.els.thead.addEventListener("click", (e) => {
           const el = e.target.closest("[data-sort-key]");
           if(!el) return;
@@ -1571,14 +1549,12 @@
           Query.apply();
         });
 
-        // virtual scroll
         UI.els.viewport.addEventListener("scroll", () => {
           VirtualList.render();
           UX.updateToTopVisible();
         });
         window.addEventListener("scroll", UX.updateToTopVisible);
 
-        // resize
         window.addEventListener("resize", () => {
           State.ROW_H = Metrics.getRowHPx();
           Columns.rebuild();
@@ -1586,7 +1562,6 @@
           UX.updateToTopVisible();
         });
 
-        // row click / copy click (event delegation)
         UI.els.rows.addEventListener("click", async (e) => {
           const copyBtn = e.target.closest("[data-copy-uid]");
           if(copyBtn){
@@ -1603,21 +1578,18 @@
           }
         });
 
-        // detail modal close
         UI.els.modalClose.addEventListener("click", Modal.closeDetail);
         UI.els.modalClose2.addEventListener("click", Modal.closeDetail);
         UI.els.modalBack.addEventListener("click", (e) => {
           if(e.target === UI.els.modalBack) Modal.closeDetail();
         });
 
-        // ESC closes modal(s)
         document.addEventListener("keydown", (e) => {
           if(e.key !== "Escape") return;
           if(UI.els.modalBack.classList.contains("show")) Modal.closeDetail();
           if(UI.els.settingsBack.classList.contains("show")) Modal.closeSettings();
         });
 
-        // detail modal copy
         UI.els.modalCopy.addEventListener("click", async () => {
           const uid = State.modalUID;
           if(uid == null) return;
@@ -1629,39 +1601,17 @@
       return { bind };
     })();
 
-    // =========================
-    // 17) App bootstrap
-    // =========================
     const App = (() => {
       const init = () => {
-        // theme first (affects metrics)
         Theme.apply(Theme.read());
-
-        // metrics
         State.ROW_H = Metrics.getRowHPx();
-
-        // state persistence
         Columns.loadShown();
-
-        // sync settings UI
         Settings.syncToUI();
-
-        // data
         Data.build();
-
-        // filters dropdown options
         FilterOptions.build();
-
-        // default expanded filters
         UX.setFiltersCollapsed(false);
-
-        // columns + header
         Columns.rebuild();
-
-        // bind events
         Events.bind();
-
-        // first render
         Query.apply(true);
         UX.updateToTopVisible();
       };
@@ -1669,7 +1619,6 @@
       return { init };
     })();
 
-    // go
     App.init();
   })();
   </script>
