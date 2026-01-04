@@ -96,6 +96,14 @@
     h1{margin:0; font-size:1.35rem; letter-spacing:.5px}
     .sub{color:var(--muted); font-size:.82rem; margin-top:.20rem}
 
+    /* ✅ 標題列：讓「抽歌」跟標題放一起 */
+    .titleRow{
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      flex-wrap:wrap;
+    }
+
     /* ✅ 將「共..筆 顯示..筆」移到下一行 */
     .metaRow{
       flex: 1 1 100%;
@@ -119,7 +127,7 @@
       background:rgba(255,255,255,.75);
     }
 
-    /* ✅ 右上角按鈕群 */
+    /* ✅ 右上角按鈕群（現在只放設定） */
     .headerBtns{
       display:inline-flex;
       align-items:center;
@@ -160,7 +168,7 @@
       border:1px solid rgba(15,23,42,.14);
     }
 
-    /* ✅ 修正：checkbox / radio 不要吃到一般 input 的 padding/height（會導致某些寬度下看起來像「不見」） */
+    /* ✅ 修正：checkbox / radio 不要吃到一般 input 的 padding/height */
     input[type="checkbox"],
     input[type="radio"]{
       height:auto;
@@ -212,6 +220,21 @@
       flex: 0 0 auto;
     }
     .iconBtn svg{width:1.15rem; height:1.15rem}
+
+    /* ✅ 標題旁抽歌按鈕：視覺更像小徽章 */
+    .titleIconBtn{
+      width:var(--ctlH);
+      height:var(--ctlH);
+      padding:0;
+      justify-content:center;
+      border-radius:14px;
+      background:rgba(122,162,255,.14);
+      border:1px solid rgba(122,162,255,.35);
+    }
+    html[data-theme="light"] .titleIconBtn{
+      background:rgba(43,107,255,.12);
+      border:1px solid rgba(43,107,255,.28);
+    }
 
     .xBtn{
       width:var(--ctlH); height:var(--ctlH);
@@ -363,8 +386,7 @@
     .sortMark{font-size:.75rem; opacity:.9}
     .sortMark.off{opacity:.35}
 
-    /* ✅ 需求：編號/歌名/歌手 標題列與內容靠左對齊
-       固定第 1 欄是 copy，後面三欄永遠是 id/title/artist */
+    /* ✅ 需求：編號/歌名/歌手 標題列與內容靠左對齊 */
     .thead .th:nth-child(2),
     .thead .th:nth-child(3),
     .thead .th:nth-child(4){
@@ -509,7 +531,7 @@
     html[data-theme="light"] .modalBack{ background:rgba(15,23,42,.35); }
     .modalBack.show{display:flex}
 
-    /* ✅ 讓彈窗內容「自適應一頁」：整個 modal 不超出視窗，內容區可捲動 */
+    /* ✅ 讓彈窗內容「自適應一頁」 */
     .modal{
       width:min(720px, 100%);
       background:rgba(17,19,24,.96);
@@ -575,7 +597,7 @@
     }
     html[data-theme="light"] .modalFoot{ border-top:1px solid rgba(15,23,42,.10); }
 
-    /* ✅ 設定 Modal 的 body：同樣自適應一頁（中間可捲動） */
+    /* ✅ 設定 Modal 的 body */
     .settingsBody{
       padding:.65rem .75rem .8rem .75rem;
       display:block;
@@ -600,7 +622,7 @@
       min-width: 0;
     }
 
-    /* ✅ A) 顯示欄位：標題獨立一行，選項下一行 */
+    /* ✅ A) 顯示欄位 */
     .settingsSection.block{
       flex-direction:column;
       align-items:stretch;
@@ -622,7 +644,7 @@
       min-width:0;
     }
 
-    /* ✅ B) tick：checkbox/radio 欄位只占方塊大小，其它空間給文字 */
+    /* ✅ B) tick */
     .tick{
       display:grid;
       grid-template-columns: 1.15rem 1fr;
@@ -638,7 +660,6 @@
       cursor:pointer;
       user-select:none;
 
-      /* 讓後面文字可以吃空間（需要時也可換行） */
       white-space:normal;
       min-width: 0;
       max-width: 100%;
@@ -663,7 +684,6 @@
     }
     html[data-theme="light"] .tick span{color:#0f172a}
 
-    /* ✅ 比對方式：容器保留，但每個選項用 tick 風格（radio 也可用） */
     .radioWrap{
       display:flex;
       align-items:center;
@@ -731,7 +751,7 @@
     }
 
     /* =========================
-       ✅ 抽歌 Modal（獨立樣式）
+       ✅ 抽歌（玩法 Modal）
        ========================= */
     .drawBody{
       padding:.65rem .75rem;
@@ -751,7 +771,7 @@
       align-items:center;
       gap:.55rem;
       flex-wrap:wrap;
-      margin-bottom:.55rem;
+      margin-bottom:.35rem;
     }
     .drawControls .btn{ height: var(--ctlH); }
     .drawSelect{
@@ -764,13 +784,16 @@
       font-size:.78rem;
       margin-top:.25rem;
     }
-    .drawResult{
-      margin-top:.65rem;
-      border-top:1px solid rgba(255,255,255,.10);
-      padding-top:.6rem;
-    }
-    html[data-theme="light"] .drawResult{
-      border-top:1px solid rgba(15,23,42,.10);
+
+    /* =========================
+       ✅ 抽歌（結果 Modal）
+       ========================= */
+    .drawResultWrap{
+      padding:.65rem .75rem;
+      flex: 1 1 auto;
+      overflow:auto;
+      min-height:0;
+      font-size:.9rem;
     }
     .drawSlogan{
       display:flex;
@@ -807,9 +830,7 @@
       border:1px solid rgba(15,23,42,.12);
       background:rgba(255,255,255,.7);
     }
-    .drawMain{
-      min-width:0;
-    }
+    .drawMain{ min-width:0; }
     .drawLine1{
       font-weight:900;
       font-size:.95rem;
@@ -847,16 +868,11 @@
   <div class="wrap">
     <header id="topHeader">
       <div>
-        <h1>二結點歌本速查</h1>
-        <div class="sub">>Happy Happy</div>
-      </div>
+        <div class="titleRow">
+          <h1>二結點歌本速查</h1>
 
-      <div class="metaRow">
-        <div class="pill" id="countPill">載入中…</div>
-
-        <!-- ✅ 右上角：抽歌 + 設定 -->
-        <div class="headerBtns">
-          <button class="btn iconBtn" id="btnDraw" title="抽歌" aria-label="抽歌">
+          <!-- ✅ 抽歌移到標題旁邊 -->
+          <button class="btn iconBtn titleIconBtn" id="btnDraw" title="抽歌" aria-label="抽歌">
             <!-- 🎲 dice icon -->
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5.5 7.5 12 4l6.5 3.5V16.5L12 20 5.5 16.5V7.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
@@ -866,7 +882,16 @@
               <circle cx="15" cy="14" r="1" fill="currentColor"/>
             </svg>
           </button>
+        </div>
 
+        <div class="sub">>Happy Happy</div>
+      </div>
+
+      <div class="metaRow">
+        <div class="pill" id="countPill">載入中…</div>
+
+        <!-- ✅ 右上角：只留設定 -->
+        <div class="headerBtns">
           <button class="btn iconBtn settingsBtn" id="btnSettings" title="設定" aria-label="設定">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M12 15.25a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5Z" stroke="currentColor" stroke-width="1.8"/>
@@ -961,7 +986,7 @@
     </div>
   </div>
 
-  <!-- ✅ 抽歌 modal -->
+  <!-- ✅ 抽歌：玩法 modal（只負責玩法 + 選數 + 開始抽） -->
   <div class="modalBack" id="drawBack" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal" style="width:min(760px, 100%);">
       <div class="modalHead">
@@ -973,7 +998,7 @@
         <div class="drawIntro">
           玩法：在「目前篩選結果」裡隨機抽歌！<br/>
           先用上面的查詢 / 語言 / 字數 / 誰的歌把範圍縮小，再來抽 1 / 3 / 5 / 10 首。<br/>
-          抽完會列出歌單，並送你一句隨機互動標語（從 JSON 載入）。
+          抽到後會「彈出結果視窗」：列出歌單＋隨機互動標語，並可一鍵複製。
         </div>
 
         <div class="drawControls">
@@ -988,19 +1013,34 @@
           </label>
 
           <button class="btn primary" id="btnDoDraw">開始抽</button>
-          <button class="btn" id="btnCopyDraw">📋 複製抽到的歌單</button>
         </div>
 
         <div class="drawHint" id="drawHint">提示：抽歌會以「目前顯示筆數」為母體。</div>
-
-        <div class="drawResult" id="drawResult" style="display:none;">
-          <div class="drawSlogan" id="drawSlogan">（標語載入中…）</div>
-          <div class="drawList" id="drawList"></div>
-        </div>
       </div>
 
       <div class="modalFoot">
         <button class="btn" id="drawClose2">關閉</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ 抽歌：結果 modal（抽到後自動彈出，含明細+Slogan+複製） -->
+  <div class="modalBack" id="drawResBack" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" style="width:min(820px, 100%);">
+      <div class="modalHead">
+        <div class="modalTitle" id="drawResTitle">抽到啦 🎉</div>
+        <button class="modalClose" id="drawResClose">關閉</button>
+      </div>
+
+      <div class="drawResultWrap">
+        <div class="drawSlogan" id="drawResSlogan">（標語載入中…）</div>
+        <div class="drawList" id="drawResList"></div>
+      </div>
+
+      <div class="modalFoot">
+        <button class="btn" id="btnCopyDraw">📋 複製抽到的歌單</button>
+        <button class="btn primary" id="btnReroll">再抽一次</button>
+        <button class="btn" id="drawResClose2">關閉</button>
       </div>
     </div>
   </div>
@@ -1064,11 +1104,10 @@
   <!-- ✅ 互動標語 JSON（請放同層 slogans.json）
        格式：
        {
-         "slogans": ["...","...（共20句）"]
+         "slogans": ["...","..."]
        }
   -->
   <script>
-    // 可自行改檔名/路徑
     window.SLOGANS_URL = "./slogans.json";
   </script>
 
@@ -1268,18 +1307,24 @@
         colPage: Utils.$("colPage"),
         colBook: Utils.$("colBook"),
 
-        // ✅ Draw
+        // ✅ Draw (玩法)
         btnDraw: Utils.$("btnDraw"),
         drawBack: Utils.$("drawBack"),
         drawClose: Utils.$("drawClose"),
         drawClose2: Utils.$("drawClose2"),
         drawCount: Utils.$("drawCount"),
         btnDoDraw: Utils.$("btnDoDraw"),
-        btnCopyDraw: Utils.$("btnCopyDraw"),
         drawHint: Utils.$("drawHint"),
-        drawResult: Utils.$("drawResult"),
-        drawSlogan: Utils.$("drawSlogan"),
-        drawList: Utils.$("drawList"),
+
+        // ✅ Draw (結果)
+        drawResBack: Utils.$("drawResBack"),
+        drawResTitle: Utils.$("drawResTitle"),
+        drawResClose: Utils.$("drawResClose"),
+        drawResClose2: Utils.$("drawResClose2"),
+        drawResSlogan: Utils.$("drawResSlogan"),
+        drawResList: Utils.$("drawResList"),
+        btnCopyDraw: Utils.$("btnCopyDraw"),
+        btnReroll: Utils.$("btnReroll"),
       });
 
       const toast = (msg, sub="") => {
@@ -1593,7 +1638,7 @@
         UI.els.settingsBack.setAttribute("aria-hidden","true");
       };
 
-      // ✅ Draw modal
+      // ✅ Draw modal（玩法）
       const openDraw = () => {
         UI.els.drawBack.classList.add("show");
         UI.els.drawBack.setAttribute("aria-hidden","false");
@@ -1603,18 +1648,26 @@
         UI.els.drawBack.setAttribute("aria-hidden","true");
       };
 
+      // ✅ Draw Result modal（結果）
+      const openDrawRes = () => {
+        UI.els.drawResBack.classList.add("show");
+        UI.els.drawResBack.setAttribute("aria-hidden","false");
+      };
+      const closeDrawRes = () => {
+        UI.els.drawResBack.classList.remove("show");
+        UI.els.drawResBack.setAttribute("aria-hidden","true");
+      };
+
       return Object.freeze({
         openDetail, closeDetail,
         openSettings, closeSettings,
-        openDraw, closeDraw
+        openDraw, closeDraw,
+        openDrawRes, closeDrawRes,
       });
     })();
 
     // ---------- Slogans ----------
     const Slogans = (() => {
-      // 允許 JSON 兩種格式：
-      // 1) { "slogans": ["..."] }
-      // 2) ["..."]
       const normalize = (data) => {
         if(Array.isArray(data)) return data.map(x=>String(x)).filter(Boolean);
         if(data && typeof data === "object" && Array.isArray(data.slogans)) return data.slogans.map(x=>String(x)).filter(Boolean);
@@ -1684,11 +1737,11 @@
         return copy.slice(0, n);
       };
 
-      const renderResult = async (pickedUIDs) => {
+      const renderInto = async (pickedUIDs, sloganEl, listEl) => {
         const base = App.state.repo.base;
 
         const slogan = await Slogans.randomOne();
-        UI.els.drawSlogan.textContent = slogan;
+        sloganEl.textContent = slogan;
 
         let html = "";
         pickedUIDs.forEach((uid, i) => {
@@ -1708,8 +1761,7 @@
           `;
         });
 
-        UI.els.drawList.innerHTML = html;
-        UI.els.drawResult.style.display = "block";
+        listEl.innerHTML = html;
       };
 
       const copyDrawList = async (pickedUIDs) => {
@@ -1723,7 +1775,7 @@
         UI.toast("已複製抽歌結果", `${pickedUIDs.length} 首`);
       };
 
-      return Object.freeze({ sampleUIDs, renderResult, copyDrawList, formatLine });
+      return Object.freeze({ sampleUIDs, renderInto, copyDrawList, formatLine });
     })();
 
     // ---------- App ----------
@@ -1787,7 +1839,7 @@
           UI.els.viewport.scrollTop = 0;
         }
 
-        // ✅ 更新抽歌提示
+        // ✅ 更新抽歌提示（玩法 modal 內）
         UI.els.drawHint.textContent = `提示：目前顯示 ${state.viewUIDs.length.toLocaleString()} 筆，抽歌會以此為母體。`;
 
         Bus.emit("list:updated", { count: state.viewUIDs.length });
@@ -2009,12 +2061,10 @@
         });
 
         // ==========================
-        // ✅ 抽歌 Events
+        // ✅ 抽歌 Events（玩法 → 結果彈窗）
         // ==========================
         UI.els.btnDraw.addEventListener("click", () => {
-          // 更新提示
           UI.els.drawHint.textContent = `提示：目前顯示 ${App.state.viewUIDs.length.toLocaleString()} 筆，抽歌會以此為母體。`;
-          // 預先載入標語（避免第一次抽時才卡）
           Slogans.ensureLoaded().catch(()=>{});
           Modals.openDraw();
         });
@@ -2026,13 +2076,19 @@
           if(e.target === UI.els.drawBack) closeDrawAll();
         });
 
-        UI.els.btnDoDraw.addEventListener("click", async () => {
+        const closeDrawResAll = () => Modals.closeDrawRes();
+        UI.els.drawResClose.addEventListener("click", closeDrawResAll);
+        UI.els.drawResClose2.addEventListener("click", closeDrawResAll);
+        UI.els.drawResBack.addEventListener("click", (e) => {
+          if(e.target === UI.els.drawResBack) closeDrawResAll();
+        });
+
+        const doDrawOnce = async () => {
           const n = Number(UI.els.drawCount.value) || 1;
           const pool = App.state.viewUIDs;
 
           if(!pool.length){
             UI.toast("沒有可抽的歌", "目前篩選結果是 0 筆");
-            UI.els.drawResult.style.display = "none";
             App.state.drawPickedUIDs = [];
             return;
           }
@@ -2041,15 +2097,29 @@
           const picked = Draw.sampleUIDs(pool, k);
           App.state.drawPickedUIDs = picked;
 
-          await Draw.renderResult(picked);
+          // ✅ 先把內容渲染到「結果彈窗」
+          UI.els.drawResTitle.textContent = `抽到啦 🎉（${k} 首）`;
+          await Draw.renderInto(picked, UI.els.drawResSlogan, UI.els.drawResList);
+
+          // ✅ 關掉玩法窗 → 彈出結果窗
+          Modals.closeDraw();
+          Modals.openDrawRes();
+
           UI.toast("抽到了！", `${k} / ${pool.length.toLocaleString()}（從目前篩選結果抽）`);
+        };
+
+        UI.els.btnDoDraw.addEventListener("click", doDrawOnce);
+
+        UI.els.btnReroll.addEventListener("click", async () => {
+          // 保持結果窗開著，直接重抽並重渲染
+          await doDrawOnce();
         });
 
         UI.els.btnCopyDraw.addEventListener("click", async () => {
           await Draw.copyDrawList(App.state.drawPickedUIDs);
         });
 
-        UI.els.drawList.addEventListener("click", async (e) => {
+        UI.els.drawResList.addEventListener("click", async (e) => {
           const btn = e.target.closest("[data-draw-copy-one]");
           if(!btn) return;
           const uid = Number(btn.getAttribute("data-draw-copy-one"));
@@ -2066,6 +2136,7 @@
           if(UI.els.modalBack.classList.contains("show")) { Modals.closeDetail(); App.state.modalUID=null; }
           if(UI.els.settingsBack.classList.contains("show")) Modals.closeSettings();
           if(UI.els.drawBack.classList.contains("show")) Modals.closeDraw();
+          if(UI.els.drawResBack.classList.contains("show")) Modals.closeDrawRes();
         });
 
         UI.els.btnToTop.addEventListener("click", () => {
