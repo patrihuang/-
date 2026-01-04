@@ -823,6 +823,8 @@
       flex-direction:column;
       gap:.5rem;
     }
+
+    /* ✅ 讓抽歌項目「可點」 */
     .drawItem{
       border:1px solid rgba(255,255,255,.12);
       background:rgba(255,255,255,.05);
@@ -832,12 +834,21 @@
       align-items:flex-start;
       justify-content:space-between;
       gap:.6rem;
+
+      cursor:pointer;
+      transition: .15s transform, .15s background;
     }
+    .drawItem:hover{ background:rgba(255,255,255,.08); }
+    .drawItem:active{ transform: translateY(1px); }
     html[data-theme="light"] .drawItem{
       border:1px solid rgba(15,23,42,.12);
       background:rgba(255,255,255,.7);
     }
+    html[data-theme="light"] .drawItem:hover{ background:rgba(15,23,42,.05); }
+
     .drawMain{ min-width:0; }
+
+    /* ✅ 預覽第一行：歌名（維持） */
     .drawLine1{
       font-weight:900;
       font-size:.95rem;
@@ -846,6 +857,20 @@
       text-overflow:ellipsis;
       white-space:nowrap;
     }
+
+    /* ✅ 需求：預覽時「編號獨立放一行顯示」 */
+    .drawIdLine{
+      margin-top:.22rem;
+      font-size:.82rem;
+      color:var(--muted);
+      line-height:1.2;
+      font-weight:900;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    /* ✅ 第三行：其他資訊（歌手/語言/字數/頁數/歌本） */
     .drawLine2{
       color:var(--muted);
       font-size:.78rem;
@@ -855,6 +880,7 @@
       text-overflow:ellipsis;
       white-space:nowrap;
     }
+
     .drawActions{
       display:flex;
       gap:.45rem;
@@ -867,6 +893,7 @@
       border-radius:14px;
       font-size:.9rem;
       font-weight:900;
+      cursor:pointer;
     }
   </style>
 </head>
@@ -1655,9 +1682,9 @@
       });
     })();
 
-    // ---------- ✅ Slogans (FIXED: 不再把可變狀態放在 freeze 物件上) ----------
+    // ---------- ✅ Slogans ----------
     const Slogans = (() => {
-      let _list = null; // ✅ mutable state in closure
+      let _list = null;
 
       const normalize = (data) => {
         if(Array.isArray(data)) return data.map(x=>String(x)).filter(Boolean);
@@ -1724,6 +1751,9 @@
         return copy.slice(0, n);
       };
 
+      // ✅ 需求：
+      // 1) 抽出來的歌單中，點選歌曲可以跳到詳細資料
+      // 2) 預覽時，編號獨立放一行顯示
       const renderInto = async (pickedUIDs, sloganEl, listEl, base) => {
         const slogan = await Slogans.randomOne();
         sloganEl.textContent = slogan;
@@ -1732,15 +1762,18 @@
         pickedUIDs.forEach((uid, i) => {
           const r = base[uid];
           const title = Utils.escapeHtml(`${r.title || ""}`);
-          const sub = Utils.escapeHtml(`${r.artist || ""}｜${r.id || ""}${r.lang ? "｜"+r.lang : ""}${r.len ? "｜"+r.len+"字" : ""}${r.page ? "｜p"+r.page : ""}${r.book ? "｜"+r.book : ""}`);
+          const idLine = Utils.escapeHtml(`編號：${r.id || ""}`); // ✅ 編號獨立一行
+          const sub = Utils.escapeHtml(`${r.artist || ""}${r.lang ? "｜"+r.lang : ""}${r.len ? "｜"+r.len+"字" : ""}${r.page ? "｜p"+r.page : ""}${r.book ? "｜"+r.book : ""}`);
+
           html += `
-            <div class="drawItem">
+            <div class="drawItem" data-draw-open="${uid}" title="點一下看詳細資料">
               <div class="drawMain">
                 <div class="drawLine1">${String(i+1).padStart(2,"0")}. ${title}</div>
+                <div class="drawIdLine">${idLine}</div>
                 <div class="drawLine2">${sub}</div>
               </div>
               <div class="drawActions">
-                <button class="btn miniBtn" data-draw-copy-one="${uid}" title="複製這一首">📋</button>
+                <button class="btn miniBtn" data-draw-copy-one="${uid}" title="複製這一首" aria-label="複製這一首">📋</button>
               </div>
             </div>
           `;
@@ -2014,8 +2047,7 @@
         });
 
         // ==========================
-        // ✅ 抽歌（修正：按開始抽沒跳結果）
-        // 主要 bug：Slogans 先前把 _list 放在 freeze 物件上，strict mode 會 throw
+        // ✅ 抽歌
         // ==========================
         UI.els.btnDraw.addEventListener("click", () => {
           UI.els.drawHint.textContent = `提示：目前顯示 ${App.state.viewUIDs.length.toLocaleString()} 筆，抽歌會以此為母體。`;
@@ -2083,13 +2115,24 @@
           await Draw.copyDrawList(App.state.drawPickedUIDs, App.state.repo.base);
         });
 
+        // ✅ 抽歌結果清單：點整個項目 => 開詳細；點📋只複製，不開詳細
         UI.els.drawResList.addEventListener("click", async (e) => {
-          const btn = e.target.closest("[data-draw-copy-one]");
-          if(!btn) return;
-          const uid = Number(btn.getAttribute("data-draw-copy-one"));
-          const line = SongRepo.makeCopyLine(App.state.repo.base[uid] || {});
-          await Clipboard.copy(line);
-          UI.toast("已複製這一首", App.state.repo.base[uid]?.title ? `「${App.state.repo.base[uid].title}」` : "");
+          const copyBtn = e.target.closest("[data-draw-copy-one]");
+          if(copyBtn){
+            e.stopPropagation();
+            const uid = Number(copyBtn.getAttribute("data-draw-copy-one"));
+            const line = SongRepo.makeCopyLine(App.state.repo.base[uid] || {});
+            await Clipboard.copy(line);
+            UI.toast("已複製這一首", App.state.repo.base[uid]?.title ? `「${App.state.repo.base[uid].title}」` : "");
+            return;
+          }
+
+          const item = e.target.closest("[data-draw-open]");
+          if(item){
+            const uid = Number(item.getAttribute("data-draw-open"));
+            App.state.modalUID = uid;
+            Modals.openDetail(App.state.repo.base[uid]);
+          }
         });
 
         // Esc
