@@ -44,12 +44,6 @@
       /* ✅ RWD：更小螢幕時，縮窄固定欄位（仍然「像」10 碼寬） */
       --colFixedSm: 8ch;
 
-      /* ✅ 置頂用：由 JS 量測 header 高度後寫入 */
-      --headerH: 0px;
-
-      /* ✅ 讓展開篩選時，filtersBody 也能「緊接」在搜尋列下方（由 JS 量測 filtersTop 高度後寫入） */
-      --filtersTopH: 0px;
-
       font-synthesis-weight:none;
     }
 
@@ -226,17 +220,15 @@
     }
     .settingsBtn svg{width:1.15rem; height:1.15rem}
 
-    /* ✅ 搜尋列：置頂（一直黏住） */
+    /* ✅ 搜尋列：取消置頂（不 sticky） + 與下拉篩選同一個 layout */
     .filtersTop{
-      position: sticky;
-      top: var(--headerH);
-      z-index: 5500;
+      position: relative;          /* ✅ 不置頂 */
+      z-index: 1;
 
-      /* ✅ 更緊密：降低上下 padding，避免展開時看起來「跳」 */
-      padding: .30rem .5rem .12rem .5rem;
+      padding: .40rem .5rem .18rem .5rem;
       border-bottom: 1px solid var(--line);
 
-      background: rgba(0,0,0,.14);
+      background: rgba(0,0,0,.10);
       backdrop-filter: blur(10px);
     }
     html[data-theme="light"] .filtersTop{
@@ -286,17 +278,12 @@
     .collapseBtn[aria-expanded="false"] svg{ transform: rotate(-90deg); }
     .collapseBtn .t{ display:none; }
 
-    /* ✅ 重要修正：
-       1) 展開時 filtersBody 也採 sticky，top = headerH + filtersTopH
-       2) 讓它永遠緊貼在「搜尋列」下面，不會在捲動/展開時跑位
-       3) padding 改成「上面很薄」，避免視覺上像多出一塊空白
-    */
+    /* ✅ 下拉篩選：同 layout（緊接在搜尋列下方），且不 sticky */
     .filtersBody{
-      position: sticky;
-      top: calc(var(--headerH) + var(--filtersTopH));
-      z-index: 5400;
+      position: relative;          /* ✅ 不置頂 */
+      z-index: 1;
 
-      background: rgba(0,0,0,.10);
+      background: rgba(0,0,0,.08);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--line);
 
@@ -304,7 +291,7 @@
       max-height: 600px;
       transition: max-height .22s ease, padding .22s ease;
 
-      padding: .12rem .5rem .35rem .5rem; /* ✅ 讓它緊接搜尋列（上 padding 很薄） */
+      padding: .18rem .5rem .42rem .5rem;
     }
     html[data-theme="light"] .filtersBody{
       background: rgba(255,255,255,.62);
@@ -682,9 +669,10 @@
     </header>
 
     <div class="card">
-      <!-- ✅ 篩選區（內含：搜尋上方新面板 + 下拉篩選） -->
+      <!-- ✅ 篩選區（同一個 layout：上=搜尋，下=語言/字數/誰的歌） -->
       <div class="filtersArea" id="filtersArea">
-        <!-- ✅ 新增：篩選面板上方的搜尋區塊（置頂） -->
+
+        <!-- ✅ 搜尋（不置頂；在同一個 layout 的最上面） -->
         <div class="filtersTop" id="filtersTop">
           <div class="searchRow">
             <input id="q" placeholder="查詢（點🔍）" />
@@ -707,7 +695,7 @@
           </div>
         </div>
 
-        <!-- ✅ 下拉篩選（可收合） -->
+        <!-- ✅ 下拉篩選（可收合；同 layout 緊接在搜尋下面） -->
         <div class="filtersBody" id="filtersBody">
           <div class="filtersRow">
             <div class="filterItem">
@@ -893,7 +881,6 @@
 
         btnToggleFilters: $("btnToggleFilters"),
         filtersBody: $("filtersBody"),
-        filtersTop: $("filtersTop"),     // ✅ 新增：量測用
 
         btnToTop: $("btnToTop"),
 
@@ -980,7 +967,7 @@
     })();
 
     // =========================
-    // 5) Metrics (CSS var -> px, docking height)
+    // 5) Metrics (CSS var -> px)
     // =========================
     const Metrics = (() => {
       const measureCssVarPx = (varName) => {
@@ -1007,13 +994,10 @@
         return Math.max(24, Math.round(px));
       };
 
+      // ✅ 仍保留（未來如果你又想做置頂，可直接恢復）
       const updateDockHeights = () => {
-        const headerH = UI.els.topHeader?.offsetHeight || 0;
-        document.documentElement.style.setProperty("--headerH", headerH + "px");
-
-        // ✅ 新增：量測 filtersTop 高度，讓 filtersBody sticky 時能「緊接」在搜尋列下方
-        const topH = UI.els.filtersTop?.offsetHeight || 0;
-        document.documentElement.style.setProperty("--filtersTopH", topH + "px");
+        // no-op-ish for now
+        void 0;
       };
 
       return { measureCssVarPx, getRowHPx, updateDockHeights };
@@ -1429,13 +1413,9 @@
         UI.els.btnToggleFilters.setAttribute("aria-expanded", (!State.filtersCollapsed).toString());
         UI.els.filtersBody.classList.toggle("collapsed", State.filtersCollapsed);
 
-        // ✅ 關鍵：收合/展開後高度會變，立刻更新 sticky 計算，避免「搜尋列跑位」
-        // 1) 先同步一次
-        Metrics.updateDockHeights();
-        // 2) 再等 transition 結束再補一次（更穩）
+        // 讓展開/收合更穩（雖然現在不 sticky，但保留以免你之後加回去）
         clearTimeout(window.__dockTimer);
         window.__dockTimer = setTimeout(() => {
-          Metrics.updateDockHeights();
           VirtualList.render();
           UX.updateToTopVisible();
         }, 260);
@@ -1476,7 +1456,6 @@
 
       const handleThemeToggle = () => {
         Theme.apply(UI.els.toggleLight.checked ? "light" : "dark");
-        Metrics.updateDockHeights();
         State.ROW_H = Metrics.getRowHPx();
         Columns.rebuild();
         Query.apply(true);
@@ -1577,7 +1556,6 @@
 
         // resize
         window.addEventListener("resize", () => {
-          Metrics.updateDockHeights();
           State.ROW_H = Metrics.getRowHPx();
           Columns.rebuild();
           VirtualList.render();
@@ -1636,7 +1614,6 @@
         Theme.apply(Theme.read());
 
         // metrics
-        Metrics.updateDockHeights();
         State.ROW_H = Metrics.getRowHPx();
 
         // state persistence
@@ -1663,9 +1640,6 @@
         // first render
         Query.apply(true);
         UX.updateToTopVisible();
-
-        // ✅ 再補一次（避免首次 fonts/layout 造成高度差）
-        setTimeout(() => Metrics.updateDockHeights(), 0);
       };
 
       return { init };
