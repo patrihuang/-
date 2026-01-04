@@ -89,7 +89,7 @@
 
       position: sticky;
       top: 0;
-      z-index: 5000;
+      z-index: 6000;
 
       /* 讓置頂時背後不透出 */
       padding: 14px 0 10px 0;
@@ -100,7 +100,7 @@
     h1{margin:0; font-size:1.35rem; letter-spacing:.5px}
     .sub{color:var(--muted); font-size:.82rem; margin-top:.35rem}
 
-    /* ✅ 將「共..筆 顯示..筆」移到下一行（不要跟 Happy Happy 同一行） */
+    /* ✅ 將「共..筆 顯示..筆」移到下一行 */
     .metaRow{
       flex: 1 1 100%;
       display:flex;
@@ -129,31 +129,12 @@
       border-radius:var(--radius);
       box-shadow:0 10px 30px rgba(0,0,0,.35);
       overflow:hidden;
+      position:relative;
     }
     html[data-theme="light"] .card{
       background:rgba(255,255,255,.85);
       border:1px solid rgba(15,23,42,.10);
       box-shadow:0 10px 30px rgba(15,23,42,.10);
-    }
-
-    /* ✅ Toolbar：也置頂（貼在 header 下方） */
-    .toolbar{
-      display:flex;
-      gap:.6rem;
-      padding:.6rem .75rem;
-      border-bottom:1px solid var(--line);
-      align-items:center;
-      flex-wrap:wrap;
-
-      position: sticky;
-      top: var(--headerH);
-      z-index: 4500;
-
-      background: rgba(0,0,0,.14);
-      backdrop-filter: blur(10px);
-    }
-    html[data-theme="light"] .toolbar{
-      background: rgba(255,255,255,.72);
     }
 
     label{font-size:.78rem; color:var(--muted)}
@@ -212,6 +193,7 @@
       padding:0;
       justify-content:center;
       border-radius:14px;
+      flex: 0 0 auto;
     }
     .iconBtn svg{width:1.15rem; height:1.15rem}
 
@@ -225,13 +207,14 @@
       font-weight:900;
       font-size:1.05rem;
       line-height:var(--ctlH);
+      flex: 0 0 auto;
     }
     html[data-theme="light"] .xBtn{
       background:rgba(15,23,42,.04);
       border:1px solid rgba(15,23,42,.12);
     }
 
-    /* ✅ 設定按鈕（取代「進階設定」整塊） */
+    /* ✅ 設定按鈕 */
     .settingsBtn{
       width:var(--ctlH); height:var(--ctlH);
       padding:0;
@@ -240,27 +223,77 @@
     }
     .settingsBtn svg{width:1.15rem; height:1.15rem}
 
-    .left{
-      display:flex;
-      gap:.6rem;
-      flex-wrap:wrap;
-      align-items:center;
-      flex: 1 1 auto;
-      min-width: 0;
+    /* ✅ (1)(2)：「查詢」那行獨立 + 只置頂查詢列 */
+    .searchDock{
+      position: sticky;
+      top: var(--headerH);
+      z-index: 5500;
+
+      padding: .6rem .75rem;
+      border-bottom:1px solid var(--line);
+
+      background: rgba(0,0,0,.14);
+      backdrop-filter: blur(10px);
+    }
+    html[data-theme="light"] .searchDock{
+      background: rgba(255,255,255,.72);
     }
 
-    /* ✅ 搜尋列：查詢/🔍/× 永遠同一橫排 */
     .searchRow{
       display:flex;
       align-items:center;
       gap:.6rem;
-      flex: 1 1 28rem;
-      min-width: 0;
-      flex-wrap: nowrap;
+      width:100%;
+      flex-wrap: nowrap; /* ✅ 永遠同一橫排 */
+      min-width:0;
     }
     .searchRow input{
       flex: 1 1 auto;
       min-width: 0;
+    }
+
+    /* ✅ (1) 篩選區：與查詢列分開，不置頂、可自由滑動 */
+    .filtersArea{
+      padding: .6rem .75rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    /* ✅ (3) 收合 UI */
+    .filtersHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.6rem;
+      margin-bottom:.45rem;
+    }
+    .filtersTitle{
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      color:var(--muted);
+      font-size:.85rem;
+      font-weight:900;
+      user-select:none;
+    }
+    .collapseBtn{
+      height:var(--ctlH);
+      padding: var(--ctlPadY) .75rem;
+      border-radius:14px;
+      display:inline-flex;
+      align-items:center;
+      gap:.45rem;
+      font-weight:900;
+    }
+    .collapseBtn svg{ width:1.05rem; height:1.05rem; transition: .18s transform; }
+    .collapseBtn[aria-expanded="false"] svg{ transform: rotate(-90deg); }
+
+    .filtersBody{
+      overflow:hidden;
+      max-height: 600px; /* 夠大即可，會用 JS 計算更精準 */
+      transition: max-height .22s ease;
+    }
+    .filtersBody.collapsed{
+      max-height: 0px;
     }
 
     /* ✅ 篩選列：預設橫排（大螢幕） */
@@ -268,76 +301,19 @@
       display:flex;
       gap:.6rem;
       flex-wrap:wrap;
-      align-items:center;
+      align-items:flex-end;
       justify-content:flex-start;
       min-width: 0;
     }
 
-    /* ✅ 每一組篩選：label + select */
     .filterItem{
       display:inline-flex;
-      align-items:center;
+      align-items:flex-end;
       gap:.45rem;
       min-width: 0;
     }
     .filterItem label{white-space:nowrap}
     .filterItem select{min-width: 7rem}
-
-    /* ✅ 設定內容：改成 modal */
-    .settingsGrid{
-      display:flex;
-      flex-direction:column;
-      gap:.75rem;
-    }
-    .settingsSection{
-      display:flex;
-      gap:.75rem;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .chip{
-      display:inline-flex; align-items:center; gap:.45rem;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.05);
-      padding:.35rem .6rem;
-      border-radius:999px;
-      font-size:.78rem;
-      cursor:pointer;
-      user-select:none;
-      white-space:nowrap;
-    }
-    html[data-theme="light"] .chip{
-      border:1px solid rgba(15,23,42,.12);
-      background:rgba(255,255,255,.65);
-    }
-    .chip input{width:1rem; height:1rem; margin:0; accent-color: var(--accent);}
-
-    .chip span{color:#cdd6e1}
-    html[data-theme="light"] .chip span{color:#0f172a}
-
-    .radioWrap{
-      display:flex;
-      align-items:center;
-      gap:.7rem;
-      padding:.35rem .6rem;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.05);
-      border-radius:999px;
-      flex-wrap:wrap;
-    }
-    html[data-theme="light"] .radioWrap{
-      border:1px solid rgba(15,23,42,.12);
-      background:rgba(255,255,255,.65);
-    }
-    .radioWrap label{
-      display:flex; align-items:center; gap:.45rem;
-      color:var(--muted);
-      font-size:.85rem;
-      cursor:pointer;
-      user-select:none;
-    }
-    .radioWrap input{width:1.05rem; height:1.05rem; accent-color:var(--accent)}
 
     .table-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
     .table-min-width{ min-width: 520px; }
@@ -467,6 +443,23 @@
     .toast.show{display:block}
     .toast .t{color:var(--muted); font-size:.78rem; margin-top:.2rem}
 
+    /* ✅ (4) 滑動至頂部 */
+    .toTop{
+      position: fixed;
+      right: 14px;
+      bottom: 78px; /* 避開 toast */
+      z-index: 9998;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: .18s opacity, .18s transform;
+    }
+    .toTop.show{
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
     .modalBack{
       position:fixed; inset:0;
       background:rgba(0,0,0,.55);
@@ -532,30 +525,83 @@
     }
     html[data-theme="light"] .modalFoot{ border-top:1px solid rgba(15,23,42,.10); }
 
-    /* ✅ 設定 Modal 的 body（跟原本 modalBody 不同 grid） */
+    /* ✅ 設定 Modal 的 body */
     .settingsBody{
       padding:.65rem .75rem .8rem .75rem;
       display:block;
       font-size:.9rem;
     }
 
-    /* ✅ RWD：控制列換行更友善、縮窄固定欄、減少 min-width */
+    .settingsGrid{
+      display:flex;
+      flex-direction:column;
+      gap:.75rem;
+    }
+    .settingsSection{
+      display:flex;
+      gap:.75rem;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .chip{
+      display:inline-flex; align-items:center; gap:.45rem;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      padding:.35rem .6rem;
+      border-radius:999px;
+      font-size:.78rem;
+      cursor:pointer;
+      user-select:none;
+      white-space:nowrap;
+    }
+    html[data-theme="light"] .chip{
+      border:1px solid rgba(15,23,42,.12);
+      background:rgba(255,255,255,.65);
+    }
+    .chip input{width:1rem; height:1rem; margin:0; accent-color: var(--accent);}
+
+    .chip span{color:#cdd6e1}
+    html[data-theme="light"] .chip span{color:#0f172a}
+
+    .radioWrap{
+      display:flex;
+      align-items:center;
+      gap:.7rem;
+      padding:.35rem .6rem;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      border-radius:999px;
+      flex-wrap:wrap;
+    }
+    html[data-theme="light"] .radioWrap{
+      border:1px solid rgba(15,23,42,.12);
+      background:rgba(255,255,255,.65);
+    }
+    .radioWrap label{
+      display:flex; align-items:center; gap:.45rem;
+      color:var(--muted);
+      font-size:.85rem;
+      cursor:pointer;
+      user-select:none;
+    }
+    .radioWrap input{width:1.05rem; height:1.05rem; accent-color:var(--accent)}
+
+    /* ✅ RWD */
     @media (max-width: 900px){
       .wrap{margin:12px auto; padding:0 12px;}
       header{align-items:flex-start;}
       input{min-width: 10rem}
       .modalBody{grid-template-columns: 5.2rem 1fr}
-      /* 小螢幕固定欄稍縮，避免太寬 */
       :root{ --colFixed: var(--colFixedSm); }
       .table-min-width{min-width: 460px}
     }
 
-    /* ✅ 小螢幕：要求的 1/2/3 */
     @media (max-width: 520px){
       h1{font-size:1.15rem}
       .sub{font-size:.78rem}
 
-      /* ✅ 等比例縮小（搜尋/🔍/× 仍同一列） */
+      /* ✅ 等比例縮小（查詢列仍同一列） */
       :root{
         --ctlH: 2.35rem;
         --ctlPadY: .42rem;
@@ -564,24 +610,6 @@
       .btn{font-size:.88rem}
       .iconBtn svg{width:1.05rem; height:1.05rem}
       .xBtn{font-size:1.00rem}
-
-      /* ✅ 每一行都一樣寬：left 改成直向堆疊 */
-      .left{
-        width:100%;
-        flex-direction:column;
-        align-items:stretch;
-      }
-
-      /* ✅ 搜尋列仍同一橫排 */
-      .searchRow{
-        width:100%;
-        flex: 0 0 auto;
-        gap:.5rem;
-      }
-      .searchRow input{
-        flex: 1 1 auto;
-        min-width: 0;
-      }
 
       /* ✅ 篩選改垂直排列、且每一行同寬 */
       .filtersRow{
@@ -606,7 +634,6 @@
         min-width: 0;
       }
 
-      .toolbar{padding:.55rem .6rem;}
       .thead{padding:.55rem .6rem;}
       .rows{padding:0 .6rem .5rem .6rem;}
       .table-min-width{min-width: 420px}
@@ -622,11 +649,9 @@
       <div class="sub">>Happy Happy</div>
     </div>
 
-    <!-- ✅ 下一行：左邊放「共..筆 顯示..筆」，右邊放「設定」圖示按鈕 -->
     <div class="metaRow">
       <div class="pill" id="countPill">載入中…</div>
       <button class="btn iconBtn settingsBtn" id="btnSettings" title="設定" aria-label="設定">
-        <!-- gear icon -->
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M12 15.25a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5Z" stroke="currentColor" stroke-width="1.8"/>
           <path d="M19.4 13a7.86 7.86 0 0 0 .04-2l1.6-1.2-1.9-3.3-1.9.8a8.2 8.2 0 0 0-1.7-1l-.3-2H9.7l-.3 2a8.2 8.2 0 0 0-1.7 1l-1.9-.8-1.9 3.3 1.6 1.2a7.86 7.86 0 0 0 .04 2L4 14.2l1.9 3.3 1.9-.8c.52.42 1.1.77 1.7 1l.3 2h4.6l.3-2c.6-.23 1.18-.58 1.7-1l1.9.8 1.9-3.3-1.6-1.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
@@ -636,21 +661,31 @@
   </header>
 
   <div class="card">
-    <div class="toolbar" id="toolbar">
-      <div class="left">
-        <!-- ✅ 查詢列：永遠同一橫排（小螢幕也不會換行） -->
-        <div class="searchRow">
-          <input id="q" placeholder="查詢（點🔍）" />
-          <button class="btn primary iconBtn" id="btnFilter" title="套用文字查詢" aria-label="套用文字查詢">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
-              <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </button>
-          <button class="btn xBtn" id="btnClearFilters" title="取消篩選/清空" aria-label="取消篩選">×</button>
-        </div>
+    <!-- ✅ 只置頂「查詢」那行 -->
+    <div class="searchDock" id="searchDock">
+      <div class="searchRow">
+        <input id="q" placeholder="查詢（點🔍）" />
+        <button class="btn primary iconBtn" id="btnFilter" title="套用文字查詢" aria-label="套用文字查詢">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="btn xBtn" id="btnClearFilters" title="取消篩選/清空" aria-label="取消篩選">×</button>
 
-        <!-- ✅ 篩選：大螢幕橫排、小螢幕直排（垂直排列） -->
+        <!-- ✅ (3) 收合篩選 -->
+        <button class="btn collapseBtn" id="btnToggleFilters" aria-expanded="true" title="收合/展開篩選">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8 10l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          篩選
+        </button>
+      </div>
+    </div>
+
+    <!-- ✅ 篩選區：不置頂，跟著內容滑動 -->
+    <div class="filtersArea" id="filtersArea">
+      <div class="filtersBody" id="filtersBody">
         <div class="filtersRow">
           <div class="filterItem">
             <label for="filterLang">語言</label>
@@ -683,6 +718,14 @@
   </div>
 </div>
 
+<!-- ✅ (4) 滑動至頂部 -->
+<button class="btn iconBtn toTop" id="btnToTop" title="滑到頂部" aria-label="滑到頂部">
+  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M12 5l7 7M12 5L5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M12 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+</button>
+
 <div class="toast" id="toast">
   <div id="toastMsg">OK</div>
   <div class="t" id="toastSub"></div>
@@ -703,7 +746,7 @@
   </div>
 </div>
 
-<!-- ✅ 設定 modal（取代原本 details 進階設定） -->
+<!-- ✅ 設定 modal -->
 <div class="modalBack" id="settingsBack" role="dialog" aria-modal="true" aria-hidden="true">
   <div class="modal" style="width:min(760px, 100%);">
     <div class="modalHead">
@@ -720,7 +763,6 @@
           <label class="chip"><input type="checkbox" id="colLen" /><span>字數</span></label>
           <label class="chip"><input type="checkbox" id="colWho" /><span>誰的歌</span></label>
           <label class="chip"><input type="checkbox" id="colPage" /><span>頁數</span></label>
-          <!-- ✅ 新增：歌本 -->
           <label class="chip"><input type="checkbox" id="colBook" /><span>歌本</span></label>
         </div>
 
@@ -814,7 +856,7 @@ function getTheme(){
 /* ✅ 記住設定欄位顯示 */
 const SHOWN_KEY = "songbook_shown_cols_v2";
 
-/* ✅ 讓虛擬清單列高跟 CSS --rowH 同步（不再寫死 72px） */
+/* ✅ 讓虛擬清單列高跟 CSS --rowH 同步 */
 function getRowHPx(){
   const v = getComputedStyle(document.documentElement).getPropertyValue("--rowH").trim();
   const probe = document.createElement("div");
@@ -822,12 +864,12 @@ function getRowHPx(){
   probe.style.left = "-99999px";
   probe.style.width = v;
   document.body.appendChild(probe);
-  const px = probe.getBoundingClientRect().width; // 用 width 來量測任意單位（rem/ch/px）
+  const px = probe.getBoundingClientRect().width;
   document.body.removeChild(probe);
-  return Math.max(24, Math.round(px)); // 保底
+  return Math.max(24, Math.round(px));
 }
 
-/* ✅ 量測任意 CSS var 實際 px，避免 minWidth 粗估造成太寬 */
+/* ✅ 量測任意 CSS var 實際 px */
 function measureVarPx(varName){
   const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
   const probe = document.createElement("div");
@@ -840,7 +882,7 @@ function measureVarPx(varName){
   return px;
 }
 
-/* ✅ 置頂：量測 header 高度，讓 toolbar 緊貼在 header 下方 */
+/* ✅ 置頂：量測 header 高度，讓 searchDock 緊貼在 header 下方 */
 function updateDockHeights(){
   const h = $("topHeader")?.offsetHeight || 0;
   document.documentElement.style.setProperty("--headerH", h + "px");
@@ -854,6 +896,44 @@ function openSettings(){
 function closeSettings(){
   $("settingsBack").classList.remove("show");
   $("settingsBack").setAttribute("aria-hidden","true");
+}
+
+/* ✅ (3) 收合篩選（預設展開） */
+let filtersCollapsed = false;
+function setFiltersCollapsed(v){
+  filtersCollapsed = !!v;
+  const body = $("filtersBody");
+  const btn = $("btnToggleFilters");
+
+  btn.setAttribute("aria-expanded", (!filtersCollapsed).toString());
+  if(filtersCollapsed){
+    body.classList.add("collapsed");
+  }else{
+    body.classList.remove("collapsed");
+    // 展開時用 scrollHeight 讓動畫更準（避免小螢幕高度變化）
+    requestAnimationFrame(() => {
+      // 不用寫死高度，只要確保 maxHeight 夠
+      // 這裡保留 class 切換即可（CSS max-height 600px）
+    });
+  }
+}
+function toggleFilters(){
+  setFiltersCollapsed(!filtersCollapsed);
+}
+
+/* ✅ (4) 滑動至頂部（主要是表格 viewport） */
+function scrollToTop(){
+  const vp = $("viewport");
+  if(vp){
+    vp.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  // 若頁面本身也有捲動，順便回頂（不影響桌機）
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function updateToTopVisible(){
+  const vp = $("viewport");
+  const show = (vp && vp.scrollTop > 220) || window.scrollY > 220;
+  $("btnToTop").classList.toggle("show", !!show);
 }
 
 // ===== 狀態 =====
@@ -879,27 +959,21 @@ const COLS_EXTRA = [
   { key:"len",  label:"字數", sortable:true, widthVar:"--colLen" },
   { key:"who",  label:"誰的歌", sortable:true, widthVar:"--colWho" },
   { key:"page", label:"頁數", sortable:true, widthVar:"--colPage" },
-  /* ✅ 新增：歌本（用 colWho 同寬，避免新增 CSS 變數） */
   { key:"book", label:"歌本", sortable:true, widthVar:"--colWho" },
 ];
 
-// ===== 虛擬清單設定（會從 CSS 讀）=====
+// ===== 虛擬清單設定 =====
 let ROW_H = 72;
 const OVERSCAN = 10;
 
 // ===== 初始化 =====
 function init(){
-  // 套用主題
   const theme = getTheme();
   setTheme(theme);
 
-  // ✅ 先量測置頂高度
   updateDockHeights();
-
-  // 同步 row height
   ROW_H = getRowHPx();
 
-  // 讀取欄位顯示設定
   loadShownSettings();
 
   $("toggleLight").checked = (theme === "light");
@@ -917,8 +991,6 @@ function init(){
     lang: (r.lang ?? "").toString().trim(),
     page: (r.page ?? "").toString().trim(),
     len: (r.len ?? "").toString().trim(),
-    /* ✅ 新增：歌本（最後一個變數）
-       songs.js 每筆資料如果有 book / songbook / bookName 都可吃到，沒有就空字串 */
     book: ((r.book ?? r.songbook ?? r.bookName ?? "")).toString().trim(),
   }));
 
@@ -928,15 +1000,18 @@ function init(){
 
   buildFilterOptions();
   bindUI();
+
+  // ✅ 預設展開
+  setFiltersCollapsed(false);
+
   rebuildColumnsAndHeader();
   applyFilterSortRender(true);
+  updateToTopVisible();
 }
 
 /* ✅ 記住/還原欄位顯示 */
 function saveShownSettings(){
-  try{
-    localStorage.setItem(SHOWN_KEY, JSON.stringify(shown));
-  }catch(_){}
+  try{ localStorage.setItem(SHOWN_KEY, JSON.stringify(shown)); }catch(_){}
 }
 function loadShownSettings(){
   try{
@@ -983,7 +1058,6 @@ function buildFilterOptions(){
 
 // ===== UI 綁定 =====
 function bindUI(){
-  // 設定按鈕
   $("btnSettings").addEventListener("click", openSettings);
   $("settingsClose").addEventListener("click", closeSettings);
   $("settingsDone").addEventListener("click", closeSettings);
@@ -993,13 +1067,21 @@ function bindUI(){
 
   $("toggleLight").addEventListener("change", () => {
     setTheme($("toggleLight").checked ? "light" : "dark");
-    // 主題切換後，10ch 的 px 會變（因字體渲染），重算 min-width + rowH
     updateDockHeights();
     ROW_H = getRowHPx();
     rebuildColumnsAndHeader();
     applyFilterSortRender(true);
     toast($("toggleLight").checked ? "已切換淺色模式" : "已切換深色模式");
   });
+
+  // ✅ (3) 收合篩選
+  $("btnToggleFilters").addEventListener("click", () => {
+    toggleFilters();
+    toast(filtersCollapsed ? "已收合篩選" : "已展開篩選");
+  });
+
+  // ✅ (4) 滑到頂部
+  $("btnToTop").addEventListener("click", scrollToTop);
 
   $("q").addEventListener("keydown", (e) => {
     if(e.key === "Enter"){
@@ -1031,19 +1113,24 @@ function bindUI(){
   $("filterLen").addEventListener("change",  () => { filters.len  = $("filterLen").value;  applyFilterSortRender(); });
   $("filterWho").addEventListener("change",  () => { filters.who  = $("filterWho").value;  applyFilterSortRender(); });
 
-  // 欄位顯示（在設定 modal 裡）
   $("colLang").addEventListener("change", () => { shown.lang = $("colLang").checked; saveShownSettings(); rebuildColumnsAndHeader(); applyFilterSortRender(true); });
   $("colLen").addEventListener("change",  () => { shown.len  = $("colLen").checked;  saveShownSettings(); rebuildColumnsAndHeader(); applyFilterSortRender(true); });
   $("colWho").addEventListener("change",  () => { shown.who  = $("colWho").checked;  saveShownSettings(); rebuildColumnsAndHeader(); applyFilterSortRender(true); });
   $("colPage").addEventListener("change", () => { shown.page = $("colPage").checked; saveShownSettings(); rebuildColumnsAndHeader(); applyFilterSortRender(true); });
   $("colBook").addEventListener("change", () => { shown.book = $("colBook").checked; saveShownSettings(); rebuildColumnsAndHeader(); applyFilterSortRender(true); });
 
-  $("viewport").addEventListener("scroll", () => render());
+  $("viewport").addEventListener("scroll", () => {
+    render();
+    updateToTopVisible();
+  });
+  window.addEventListener("scroll", updateToTopVisible);
+
   window.addEventListener("resize", () => {
     updateDockHeights();
     ROW_H = getRowHPx();
-    rebuildColumnsAndHeader(); // ✅ RWD 造成 ch/rem 變化時，重算 minWidth
+    rebuildColumnsAndHeader();
     render();
+    updateToTopVisible();
   });
 
   $("rows").addEventListener("click", async (e) => {
@@ -1067,6 +1154,7 @@ function bindUI(){
   $("modalBack").addEventListener("click", (e) => {
     if(e.target === $("modalBack")) closeModal();
   });
+
   document.addEventListener("keydown", (e) => {
     if(e.key === "Escape"){
       if($("modalBack").classList.contains("show")) closeModal();
@@ -1095,19 +1183,16 @@ function getActiveCols(){
 function rebuildColumnsAndHeader(){
   const cols = getActiveCols();
 
-  // ✅ Grid columns：編號/歌名/歌手 都是 10ch（小螢幕由 CSS 把 --colFixed 改小）
   const parts = cols.map(c => `var(${c.widthVar})`);
   document.documentElement.style.setProperty("--grid", parts.join(" "));
 
-  // ✅ min-width：真實量測每個 var 的 px（含 ch/rem），避免太寬
   let minW = 0;
   for(const c of cols){
     const w = measureVarPx(c.widthVar);
-    minW += w + 16; // padding buffer
+    minW += w + 16;
   }
   $("tableMinWidth").style.minWidth = Math.max(420, Math.ceil(minW)) + "px";
 
-  // 表頭
   const thead = $("thead");
   let html = "";
   for(const c of cols){
@@ -1156,7 +1241,6 @@ function passDropdownFilters(r){
   return true;
 }
 function combinedText(r){
-  // ✅ 新增歌本也納入全文查詢
   return normalize([r.who, r.id, r.title, r.artist, r.lang, r.page, r.len, r.book].join(" "));
 }
 function passTextFilter(r){
@@ -1224,6 +1308,7 @@ function applyFilterSortRender(keepScroll=false){
   }else{
     $("viewport").scrollTop = 0;
   }
+  updateToTopVisible();
 }
 
 function updateSpacer(){
