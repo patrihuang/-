@@ -514,6 +514,7 @@
       transform: translateY(0);
     }
 
+    /* ✅ 重要：Modal backdrop 用「動態 z-index」疊層（JS 會覆寫 style.zIndex） */
     .modalBack{
       position:fixed; inset:0;
       background:rgba(0,0,0,.55);
@@ -521,7 +522,7 @@
       align-items:center;
       justify-content:center;
       padding:16px;
-      z-index:10000;
+      z-index:10000; /* baseline，實際由 JS bringToFront 控制 */
     }
     html[data-theme="light"] .modalBack{ background:rgba(15,23,42,.35); }
     .modalBack.show{display:flex}
@@ -1615,6 +1616,13 @@
 
     // ---------- Modals ----------
     const Modals = (() => {
+      // ✅ 關鍵修正：動態把「最後打開的 modal」置頂，避免被其他 modal 蓋住
+      let _z = 10000;
+      const bringToFront = (backEl) => {
+        _z += 5;
+        backEl.style.zIndex = String(_z);
+      };
+
       const openDetail = (row) => {
         UI.els.modalTitle.textContent = row?.title ? `詳細資料：${row.title}` : "詳細資料";
 
@@ -1635,8 +1643,12 @@
         }
         UI.els.modalBody.innerHTML = html;
 
+        bringToFront(UI.els.modalBack);              // ✅ 置頂（重點）
         UI.els.modalBack.classList.add("show");
         UI.els.modalBack.setAttribute("aria-hidden","false");
+
+        // ✅ 把焦點拉到詳細視窗（避免「看起來像沒置頂」）
+        setTimeout(() => UI.els.modalClose?.focus?.(), 0);
       };
 
       const closeDetail = () => {
@@ -1645,8 +1657,10 @@
       };
 
       const openSettings = () => {
+        bringToFront(UI.els.settingsBack);
         UI.els.settingsBack.classList.add("show");
         UI.els.settingsBack.setAttribute("aria-hidden","false");
+        setTimeout(() => UI.els.settingsClose?.focus?.(), 0);
       };
 
       const closeSettings = () => {
@@ -1656,8 +1670,10 @@
 
       // ✅ Draw modal（玩法）
       const openDraw = () => {
+        bringToFront(UI.els.drawBack);
         UI.els.drawBack.classList.add("show");
         UI.els.drawBack.setAttribute("aria-hidden","false");
+        setTimeout(() => UI.els.drawClose?.focus?.(), 0);
       };
       const closeDraw = () => {
         UI.els.drawBack.classList.remove("show");
@@ -1666,8 +1682,10 @@
 
       // ✅ Draw Result modal（結果）
       const openDrawRes = () => {
+        bringToFront(UI.els.drawResBack);
         UI.els.drawResBack.classList.add("show");
         UI.els.drawResBack.setAttribute("aria-hidden","false");
+        setTimeout(() => UI.els.drawResClose?.focus?.(), 0);
       };
       const closeDrawRes = () => {
         UI.els.drawResBack.classList.remove("show");
@@ -1751,9 +1769,6 @@
         return copy.slice(0, n);
       };
 
-      // ✅ 需求：
-      // 1) 抽出來的歌單中，點選歌曲可以跳到詳細資料
-      // 2) 預覽時，編號獨立放一行顯示
       const renderInto = async (pickedUIDs, sloganEl, listEl, base) => {
         const slogan = await Slogans.randomOne();
         sloganEl.textContent = slogan;
@@ -1762,7 +1777,7 @@
         pickedUIDs.forEach((uid, i) => {
           const r = base[uid];
           const title = Utils.escapeHtml(`${r.title || ""}`);
-          const idLine = Utils.escapeHtml(`編號：${r.id || ""}`); // ✅ 編號獨立一行
+          const idLine = Utils.escapeHtml(`編號：${r.id || ""}`);
           const sub = Utils.escapeHtml(`${r.artist || ""}${r.lang ? "｜"+r.lang : ""}${r.len ? "｜"+r.len+"字" : ""}${r.page ? "｜p"+r.page : ""}${r.book ? "｜"+r.book : ""}`);
 
           html += `
@@ -2131,7 +2146,7 @@
           if(item){
             const uid = Number(item.getAttribute("data-draw-open"));
             App.state.modalUID = uid;
-            Modals.openDetail(App.state.repo.base[uid]);
+            Modals.openDetail(App.state.repo.base[uid]); // ✅ 現在一定會置頂，不會被抽歌結果蓋住
           }
         });
 
