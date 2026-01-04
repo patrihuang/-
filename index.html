@@ -96,7 +96,7 @@
     h1{margin:0; font-size:1.35rem; letter-spacing:.5px}
     .sub{color:var(--muted); font-size:.82rem; margin-top:.20rem}
 
-    /* ✅ 標題列：讓「抽歌」跟標題放一起 */
+    /* ✅ 標題列：左側只放標題 */
     .titleRow{
       display:flex;
       align-items:center;
@@ -127,7 +127,7 @@
       background:rgba(255,255,255,.75);
     }
 
-    /* ✅ 右上角按鈕群（現在只放設定） */
+    /* ✅ 右上角按鈕群（抽歌 + 設定） */
     .headerBtns{
       display:inline-flex;
       align-items:center;
@@ -221,17 +221,12 @@
     }
     .iconBtn svg{width:1.15rem; height:1.15rem}
 
-    /* ✅ 標題旁抽歌按鈕：視覺更像小徽章 */
-    .titleIconBtn{
-      width:var(--ctlH);
-      height:var(--ctlH);
-      padding:0;
-      justify-content:center;
-      border-radius:14px;
+    /* ✅ 抽歌按鈕（icon） */
+    .drawBtn{
       background:rgba(122,162,255,.14);
       border:1px solid rgba(122,162,255,.35);
     }
-    html[data-theme="light"] .titleIconBtn{
+    html[data-theme="light"] .drawBtn{
       background:rgba(43,107,255,.12);
       border:1px solid rgba(43,107,255,.28);
     }
@@ -705,6 +700,7 @@
       .table-min-width{min-width: 460px}
     }
 
+    /* ✅ 小版面：把「抽歌」「進階設定」縮小到原先的一半大小 */
     @media (max-width: 520px){
       h1{font-size:1.15rem}
       .sub{font-size:.78rem}
@@ -717,6 +713,17 @@
       .btn{font-size:.88rem}
       .iconBtn svg{width:1.05rem; height:1.05rem}
       .xBtn{font-size:1.00rem}
+
+      /* ✅ 兩個 icon 按鈕縮小 0.5 倍（不影響其他按鈕） */
+      .headerBtns .iconBtn{
+        width: calc(var(--ctlH) * 0.5);
+        height: calc(var(--ctlH) * 0.5);
+        border-radius: 10px;
+      }
+      .headerBtns .iconBtn svg{
+        width: .78rem;
+        height: .78rem;
+      }
 
       .filtersRow{
         width:100%;
@@ -870,9 +877,16 @@
       <div>
         <div class="titleRow">
           <h1>二結點歌本速查</h1>
+        </div>
+        <div class="sub">>Happy Happy</div>
+      </div>
 
-          <!-- ✅ 抽歌移到標題旁邊 -->
-          <button class="btn iconBtn titleIconBtn" id="btnDraw" title="抽歌" aria-label="抽歌">
+      <div class="metaRow">
+        <div class="pill" id="countPill">載入中…</div>
+
+        <!-- ✅ 抽歌搬到「進階設定」旁邊 -->
+        <div class="headerBtns">
+          <button class="btn iconBtn drawBtn" id="btnDraw" title="抽歌" aria-label="抽歌">
             <!-- 🎲 dice icon -->
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5.5 7.5 12 4l6.5 3.5V16.5L12 20 5.5 16.5V7.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
@@ -882,17 +896,8 @@
               <circle cx="15" cy="14" r="1" fill="currentColor"/>
             </svg>
           </button>
-        </div>
 
-        <div class="sub">>Happy Happy</div>
-      </div>
-
-      <div class="metaRow">
-        <div class="pill" id="countPill">載入中…</div>
-
-        <!-- ✅ 右上角：只留設定 -->
-        <div class="headerBtns">
-          <button class="btn iconBtn settingsBtn" id="btnSettings" title="設定" aria-label="設定">
+          <button class="btn iconBtn settingsBtn" id="btnSettings" title="進階設定" aria-label="進階設定">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M12 15.25a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5Z" stroke="currentColor" stroke-width="1.8"/>
               <path d="M19.4 13a7.86 7.86 0 0 0 .04-2l1.6-1.2-1.9-3.3-1.9.8a8.2 8.2 0 0 0-1.7-1l-.3-2H9.7l-.3 2a8.2 8.2 0 0 0-1.7 1l-1.9-.8-1.9 3.3 1.6 1.2a7.86 7.86 0 0 0 .04 2L4 14.2l1.9 3.3 1.9-.8c.52.42 1.1.77 1.7 1l.3 2h4.6l.3-2c.6-.23 1.18-.58 1.7-1l1.9.8 1.9-3.3-1.6-1.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
@@ -1049,7 +1054,7 @@
   <div class="modalBack" id="settingsBack" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal" style="width:min(760px, 100%);">
       <div class="modalHead">
-        <div class="modalTitle">設定</div>
+        <div class="modalTitle">進階設定</div>
         <button class="modalClose" id="settingsClose">關閉</button>
       </div>
 
@@ -1111,9 +1116,6 @@
     window.SLOGANS_URL = "./slogans.json";
   </script>
 
-  <!-- ===========================
-       Refactor: Low coupling / High cohesion
-       =========================== -->
   <script>
   ;(() => {
     "use strict";
@@ -1150,9 +1152,6 @@
         { key:"page", label:"頁數",  sortable:true, widthVar:"--colPage" },
         { key:"book", label:"歌本",  sortable:true, widthVar:"--colWho" },
       ]),
-      DRAW: Object.freeze({
-        COUNTS: Object.freeze([1,3,5,10]),
-      }),
     });
 
     // ---------- Utils ----------
@@ -1162,7 +1161,6 @@
       escapeHtml: (s) => (s ?? "").toString()
         .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
         .replaceAll('"',"&quot;").replaceAll("'","&#039;"),
-      clamp: (v, min, max) => Math.max(min, Math.min(max, v)),
       debounce: (fn, ms=120) => {
         let t=null;
         return (...args) => { clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
@@ -1228,7 +1226,6 @@
         document.body.removeChild(probe);
         return px;
       };
-
       const getRowHPx = () => {
         const v = getComputedStyle(document.documentElement).getPropertyValue("--rowH").trim();
         const probe = document.createElement("div");
@@ -1240,7 +1237,6 @@
         document.body.removeChild(probe);
         return Math.max(24, Math.round(px));
       };
-
       return Object.freeze({ measureCssVarPx, getRowHPx });
     })();
 
@@ -1737,9 +1733,7 @@
         return copy.slice(0, n);
       };
 
-      const renderInto = async (pickedUIDs, sloganEl, listEl) => {
-        const base = App.state.repo.base;
-
+      const renderInto = async (pickedUIDs, sloganEl, listEl, base) => {
         const slogan = await Slogans.randomOne();
         sloganEl.textContent = slogan;
 
@@ -1764,18 +1758,17 @@
         listEl.innerHTML = html;
       };
 
-      const copyDrawList = async (pickedUIDs) => {
+      const copyDrawList = async (pickedUIDs, base) => {
         if(!pickedUIDs || !pickedUIDs.length){
           UI.toast("還沒抽歌", "先按「開始抽」");
           return;
         }
-        const base = App.state.repo.base;
         const lines = pickedUIDs.map((uid,i)=>formatLine(base[uid], i));
         await Clipboard.copy(lines.join("\n"));
         UI.toast("已複製抽歌結果", `${pickedUIDs.length} 首`);
       };
 
-      return Object.freeze({ sampleUIDs, renderInto, copyDrawList, formatLine });
+      return Object.freeze({ sampleUIDs, renderInto, copyDrawList });
     })();
 
     // ---------- App ----------
@@ -1793,6 +1786,7 @@
 
         // ✅ Draw state
         drawPickedUIDs: [],
+        isDrawing: false,
       };
 
       const computeCols = () => Columns.activeCols(state.shown);
@@ -1812,7 +1806,7 @@
         const viewUIDs = QueryEngine.apply(state.repo.base, {
           filters: state.filters,
           q: UI.els.q.value,
-          matchMode: UI.readMatchMode(),
+          matchMode: document.querySelector('input[name="matchMode"]:checked')?.value || "fuzzy",
           sortKey: state.sortKey,
           sortDir: state.sortDir,
         });
@@ -1839,9 +1833,7 @@
           UI.els.viewport.scrollTop = 0;
         }
 
-        // ✅ 更新抽歌提示（玩法 modal 內）
         UI.els.drawHint.textContent = `提示：目前顯示 ${state.viewUIDs.length.toLocaleString()} 筆，抽歌會以此為母體。`;
-
         Bus.emit("list:updated", { count: state.viewUIDs.length });
       };
 
@@ -1862,13 +1854,18 @@
         }, 260);
       };
 
-      const updateToTopVisible = () => {
-        const vp = UI.els.viewport;
-        const show = (vp && vp.scrollTop > Config.LIMITS.TO_TOP_SHOW_AT) || window.scrollY > Config.LIMITS.TO_TOP_SHOW_AT;
-        UI.els.btnToTop.classList.toggle("show", !!show);
-      };
+      const init = () => {
+        Theme.apply(Theme.read());
+        state.rowH = Metrics.getRowHPx();
 
-      const buildFilterOptions = () => {
+        state.repo = SongRepo.build(window.SONGS);
+
+        // build filter options
+        const base = state.repo.base;
+        const langs = SongRepo.uniqueValues(base, "lang").sort((a,b)=>a.localeCompare(b, "zh-Hant"));
+        const whos  = SongRepo.uniqueValues(base, "who").sort((a,b)=>a.localeCompare(b, "zh-Hant"));
+        const lens  = SongRepo.uniqueValues(base, "len").sort((a,b)=> (Number(a)||0) - (Number(b)||0));
+
         const setSelectOptions = (selectEl, values, placeholder="全部") => {
           selectEl.innerHTML = "";
           selectEl.appendChild(new Option(placeholder, ""));
@@ -1880,60 +1877,32 @@
           }
           for(const v of values) selectEl.appendChild(new Option(v, v));
         };
-
-        const base = state.repo.base;
-        const langs = SongRepo.uniqueValues(base, "lang").sort((a,b)=>a.localeCompare(b, "zh-Hant"));
-        const whos  = SongRepo.uniqueValues(base, "who").sort((a,b)=>a.localeCompare(b, "zh-Hant"));
-        const lens  = SongRepo.uniqueValues(base, "len").sort((a,b)=> (Number(a)||0) - (Number(b)||0));
-
         setSelectOptions(UI.els.filterLang, langs, "全部");
         setSelectOptions(UI.els.filterLen,  lens,  "全部");
         setSelectOptions(UI.els.filterWho,  whos,  "全部");
-      };
 
-      const syncSettingsToUI = () => {
-        const theme = Theme.read();
-        UI.els.toggleLight.checked = (theme === "light");
-
+        // sync settings
+        UI.els.toggleLight.checked = (Theme.read() === "light");
         UI.els.colLang.checked = state.shown.lang;
         UI.els.colLen.checked  = state.shown.len;
         UI.els.colWho.checked  = state.shown.who;
         UI.els.colPage.checked = state.shown.page;
         UI.els.colBook.checked = state.shown.book;
-      };
 
-      const init = () => {
-        Theme.apply(Theme.read());
-        state.rowH = Metrics.getRowHPx();
-
-        state.repo = SongRepo.build(window.SONGS);
-        buildFilterOptions();
-
-        syncSettingsToUI();
         rebuildColumns();
         setFiltersCollapsed(false);
-
         applyQuery({ keepScroll:true });
-        updateToTopVisible();
 
-        // ✅ 預先嘗試載入標語（不阻塞）
         Slogans.ensureLoaded().catch(()=>{});
-
-        Bus.on("scroll:changed", updateToTopVisible);
-        Bus.on("list:updated", updateToTopVisible);
       };
 
-      Bus.on("query:apply", (opts) => applyQuery(opts));
-      Bus.on("cols:rebuild", () => rebuildColumns());
-      Bus.on("filters:collapse", (v) => setFiltersCollapsed(v));
-      Bus.on("ui:toast", ({msg, sub}) => UI.toast(msg, sub || ""));
-
-      return Object.freeze({ state, init, applyQuery, rebuildColumns, setFiltersCollapsed, updateToTopVisible });
+      return Object.freeze({ state, init, applyQuery, rebuildColumns, setFiltersCollapsed });
     })();
 
     // ---------- Events ----------
     const Events = (() => {
       const bind = () => {
+        // Settings
         UI.els.btnSettings.addEventListener("click", Modals.openSettings);
         UI.els.settingsClose.addEventListener("click", Modals.closeSettings);
         UI.els.settingsDone.addEventListener("click", Modals.closeSettings);
@@ -1944,16 +1913,16 @@
         UI.els.toggleLight.addEventListener("change", () => {
           Theme.apply(UI.els.toggleLight.checked ? "light" : "dark");
           App.state.rowH = Metrics.getRowHPx();
-          Bus.emit("cols:rebuild");
-          Bus.emit("query:apply", { keepScroll:true });
+          App.rebuildColumns();
+          App.applyQuery({ keepScroll:true });
           UI.toast(UI.els.toggleLight.checked ? "已切換淺色模式" : "已切換深色模式");
         });
 
         const onShown = (key, checked) => {
           App.state.shown[key] = !!checked;
-          Columns.saveShown(App.state.shown);
-          Bus.emit("cols:rebuild");
-          Bus.emit("query:apply", { keepScroll:true });
+          Storage.safeSetJSON(Config.KEYS.SHOWN, App.state.shown);
+          App.rebuildColumns();
+          App.applyQuery({ keepScroll:true });
         };
         UI.els.colLang.addEventListener("change", () => onShown("lang", UI.els.colLang.checked));
         UI.els.colLen.addEventListener("change",  () => onShown("len",  UI.els.colLen.checked));
@@ -1961,14 +1930,16 @@
         UI.els.colPage.addEventListener("change", () => onShown("page", UI.els.colPage.checked));
         UI.els.colBook.addEventListener("change", () => onShown("book", UI.els.colBook.checked));
 
+        // Collapse filters
         UI.els.btnToggleFilters.addEventListener("click", () => {
           App.setFiltersCollapsed(!App.state.filtersCollapsed);
           UI.toast(App.state.filtersCollapsed ? "已收合篩選" : "已展開篩選");
         });
 
+        // Search
         UI.els.q.addEventListener("keydown", (e) => {
           if(e.key === "Enter"){
-            Bus.emit("query:apply", { keepScroll:false });
+            App.applyQuery({ keepScroll:false });
             UI.toast("已套用文字查詢", `顯示 ${App.state.viewUIDs.length.toLocaleString()} 筆`);
           }else if(e.key === "Escape"){
             UI.els.q.value = "";
@@ -1976,7 +1947,7 @@
           }
         });
         UI.els.btnFilter.addEventListener("click", () => {
-          Bus.emit("query:apply", { keepScroll:false });
+          App.applyQuery({ keepScroll:false });
           UI.toast("已套用篩選", `顯示 ${App.state.viewUIDs.length.toLocaleString()} 筆`);
         });
 
@@ -1987,15 +1958,16 @@
           UI.els.filterLen.value = "";
           UI.els.filterWho.value = "";
           App.state.sortKey = ""; App.state.sortDir = "";
-          Bus.emit("cols:rebuild");
-          Bus.emit("query:apply", { keepScroll:false });
+          App.rebuildColumns();
+          App.applyQuery({ keepScroll:false });
           UI.toast("已清空", "文字/下拉/排序 已重置");
         });
 
-        UI.els.filterLang.addEventListener("change", () => { App.state.filters.lang = UI.els.filterLang.value; Bus.emit("query:apply", { keepScroll:false }); });
-        UI.els.filterLen.addEventListener("change",  () => { App.state.filters.len  = UI.els.filterLen.value;  Bus.emit("query:apply", { keepScroll:false }); });
-        UI.els.filterWho.addEventListener("change",  () => { App.state.filters.who  = UI.els.filterWho.value;  Bus.emit("query:apply", { keepScroll:false }); });
+        UI.els.filterLang.addEventListener("change", () => { App.state.filters.lang = UI.els.filterLang.value; App.applyQuery({ keepScroll:false }); });
+        UI.els.filterLen.addEventListener("change",  () => { App.state.filters.len  = UI.els.filterLen.value;  App.applyQuery({ keepScroll:false }); });
+        UI.els.filterWho.addEventListener("change",  () => { App.state.filters.who  = UI.els.filterWho.value;  App.applyQuery({ keepScroll:false }); });
 
+        // Sort header
         UI.els.thead.addEventListener("click", (e) => {
           const el = e.target.closest("[data-sort-key]");
           if(!el) return;
@@ -2003,10 +1975,11 @@
           const next = Columns.toggleSort({ sortKey: App.state.sortKey, sortDir: App.state.sortDir }, key);
           App.state.sortKey = next.sortKey;
           App.state.sortDir = next.sortDir;
-          Bus.emit("cols:rebuild");
-          Bus.emit("query:apply", { keepScroll:false });
+          App.rebuildColumns();
+          App.applyQuery({ keepScroll:false });
         });
 
+        // Virtual list scroll
         UI.els.viewport.addEventListener("scroll", () => {
           VirtualList.render({
             base: App.state.repo.base,
@@ -2014,22 +1987,9 @@
             rowH: App.state.rowH,
             cols: Columns.activeCols(App.state.shown),
           });
-          Bus.emit("scroll:changed");
         });
-        window.addEventListener("scroll", () => Bus.emit("scroll:changed"));
 
-        window.addEventListener("resize", Utils.debounce(() => {
-          App.state.rowH = Metrics.getRowHPx();
-          Bus.emit("cols:rebuild");
-          VirtualList.render({
-            base: App.state.repo.base,
-            viewUIDs: App.state.viewUIDs,
-            rowH: App.state.rowH,
-            cols: Columns.activeCols(App.state.shown),
-          });
-          Bus.emit("scroll:changed");
-        }, 120));
-
+        // Rows click
         UI.els.rows.addEventListener("click", async (e) => {
           const copyBtn = e.target.closest("[data-copy-uid]");
           if(copyBtn){
@@ -2047,6 +2007,7 @@
           }
         });
 
+        // Detail modal close
         UI.els.modalClose.addEventListener("click", () => { Modals.closeDetail(); App.state.modalUID=null; });
         UI.els.modalClose2.addEventListener("click", () => { Modals.closeDetail(); App.state.modalUID=null; });
         UI.els.modalBack.addEventListener("click", (e) => {
@@ -2061,7 +2022,9 @@
         });
 
         // ==========================
-        // ✅ 抽歌 Events（玩法 → 結果彈窗）
+        // ✅ 抽歌：修正「按開始抽沒跳結果」
+        // - 保證：先渲染 drawResBack，再 show
+        // - 避免：連點造成狀態混亂（isDrawing guard）
         // ==========================
         UI.els.btnDraw.addEventListener("click", () => {
           UI.els.drawHint.textContent = `提示：目前顯示 ${App.state.viewUIDs.length.toLocaleString()} 筆，抽歌會以此為母體。`;
@@ -2072,51 +2035,60 @@
         const closeDrawAll = () => Modals.closeDraw();
         UI.els.drawClose.addEventListener("click", closeDrawAll);
         UI.els.drawClose2.addEventListener("click", closeDrawAll);
-        UI.els.drawBack.addEventListener("click", (e) => {
-          if(e.target === UI.els.drawBack) closeDrawAll();
-        });
+        UI.els.drawBack.addEventListener("click", (e) => { if(e.target === UI.els.drawBack) closeDrawAll(); });
 
         const closeDrawResAll = () => Modals.closeDrawRes();
         UI.els.drawResClose.addEventListener("click", closeDrawResAll);
         UI.els.drawResClose2.addEventListener("click", closeDrawResAll);
-        UI.els.drawResBack.addEventListener("click", (e) => {
-          if(e.target === UI.els.drawResBack) closeDrawResAll();
-        });
+        UI.els.drawResBack.addEventListener("click", (e) => { if(e.target === UI.els.drawResBack) closeDrawResAll(); });
 
-        const doDrawOnce = async () => {
-          const n = Number(UI.els.drawCount.value) || 1;
-          const pool = App.state.viewUIDs;
+        const doDrawOnce = async (alsoKeepResOpen=false) => {
+          if(App.state.isDrawing) return; // 防連點
+          App.state.isDrawing = true;
+          UI.els.btnDoDraw.disabled = true;
+          UI.els.btnReroll.disabled = true;
 
-          if(!pool.length){
-            UI.toast("沒有可抽的歌", "目前篩選結果是 0 筆");
-            App.state.drawPickedUIDs = [];
-            return;
+          try{
+            const n = Number(UI.els.drawCount.value) || 1;
+            const pool = App.state.viewUIDs;
+
+            if(!pool.length){
+              UI.toast("沒有可抽的歌", "目前篩選結果是 0 筆");
+              App.state.drawPickedUIDs = [];
+              return;
+            }
+
+            const k = Math.min(n, pool.length);
+            const picked = Draw.sampleUIDs(pool, k);
+            App.state.drawPickedUIDs = picked;
+
+            // ✅ 先渲染結果
+            UI.els.drawResTitle.textContent = `抽到啦 🎉（${k} 首）`;
+            await Draw.renderInto(picked, UI.els.drawResSlogan, UI.els.drawResList, App.state.repo.base);
+
+            // ✅ 再顯示結果視窗（修正：一定會跳出）
+            if(!alsoKeepResOpen){
+              Modals.closeDraw();
+              Modals.openDrawRes();
+            }else{
+              // reroll：結果窗已開，確保仍是 show
+              Modals.openDrawRes();
+            }
+
+            UI.toast("抽到了！", `${k} / ${pool.length.toLocaleString()}（從目前篩選結果抽）`);
+          }finally{
+            UI.els.btnDoDraw.disabled = false;
+            UI.els.btnReroll.disabled = false;
+            App.state.isDrawing = false;
           }
-
-          const k = Math.min(n, pool.length);
-          const picked = Draw.sampleUIDs(pool, k);
-          App.state.drawPickedUIDs = picked;
-
-          // ✅ 先把內容渲染到「結果彈窗」
-          UI.els.drawResTitle.textContent = `抽到啦 🎉（${k} 首）`;
-          await Draw.renderInto(picked, UI.els.drawResSlogan, UI.els.drawResList);
-
-          // ✅ 關掉玩法窗 → 彈出結果窗
-          Modals.closeDraw();
-          Modals.openDrawRes();
-
-          UI.toast("抽到了！", `${k} / ${pool.length.toLocaleString()}（從目前篩選結果抽）`);
         };
 
-        UI.els.btnDoDraw.addEventListener("click", doDrawOnce);
+        UI.els.btnDoDraw.addEventListener("click", () => doDrawOnce(false));
 
-        UI.els.btnReroll.addEventListener("click", async () => {
-          // 保持結果窗開著，直接重抽並重渲染
-          await doDrawOnce();
-        });
+        UI.els.btnReroll.addEventListener("click", () => doDrawOnce(true));
 
         UI.els.btnCopyDraw.addEventListener("click", async () => {
-          await Draw.copyDrawList(App.state.drawPickedUIDs);
+          await Draw.copyDrawList(App.state.drawPickedUIDs, App.state.repo.base);
         });
 
         UI.els.drawResList.addEventListener("click", async (e) => {
@@ -2128,9 +2100,7 @@
           UI.toast("已複製這一首", App.state.repo.base[uid]?.title ? `「${App.state.repo.base[uid].title}」` : "");
         });
 
-        // ==========================
         // Esc
-        // ==========================
         document.addEventListener("keydown", (e) => {
           if(e.key !== "Escape") return;
           if(UI.els.modalBack.classList.contains("show")) { Modals.closeDetail(); App.state.modalUID=null; }
@@ -2139,6 +2109,7 @@
           if(UI.els.drawResBack.classList.contains("show")) Modals.closeDrawRes();
         });
 
+        // To top
         UI.els.btnToTop.addEventListener("click", () => {
           UI.els.viewport?.scrollTo({ top: 0, behavior: "smooth" });
           window.scrollTo({ top: 0, behavior: "smooth" });
