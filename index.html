@@ -47,6 +47,9 @@
       /* ✅ 置頂用：由 JS 量測 header 高度後寫入 */
       --headerH: 0px;
 
+      /* ✅ 讓展開篩選時，filtersBody 也能「緊接」在搜尋列下方（由 JS 量測 filtersTop 高度後寫入） */
+      --filtersTopH: 0px;
+
       font-synthesis-weight:none;
     }
 
@@ -83,22 +86,21 @@
       display:flex;
       align-items:flex-end;
       justify-content:space-between;
-      gap:8px;               /* ✅ 更緊密 */
-      margin-bottom:6px;     /* ✅ 更緊密 */
+      gap:8px;
+      margin-bottom:6px;
       flex-wrap:wrap;
 
       position: sticky;
       top: 0;
       z-index: 6000;
 
-      /* ✅ 更緊密：縮小置頂區上下 padding */
       padding: 10px 0 6px 0;
       background:linear-gradient(180deg, var(--bgTop), var(--bgMid) 40%, var(--bgBot));
       backdrop-filter: blur(10px);
     }
 
     h1{margin:0; font-size:1.35rem; letter-spacing:.5px}
-    .sub{color:var(--muted); font-size:.82rem; margin-top:.20rem} /* ✅ 更緊密 */
+    .sub{color:var(--muted); font-size:.82rem; margin-top:.20rem}
 
     /* ✅ 將「共..筆 顯示..筆」移到下一行 */
     .metaRow{
@@ -106,13 +108,13 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:.45rem;       /* ✅ 更緊密 */
-      margin-top:.20rem;/* ✅ 更緊密 */
+      gap:.45rem;
+      margin-top:.20rem;
     }
 
     .pill{
       font-size:.78rem; color:var(--muted);
-      padding:.28rem .55rem; /* ✅ 更緊密 */
+      padding:.28rem .55rem;
       border:1px solid rgba(255,255,255,.08);
       border-radius:999px;
       background:rgba(0,0,0,.18);
@@ -224,14 +226,14 @@
     }
     .settingsBtn svg{width:1.15rem; height:1.15rem}
 
-    /* ✅ 搜尋列：移到篩選面板的「上方新區塊」並置頂 */
+    /* ✅ 搜尋列：置頂（一直黏住） */
     .filtersTop{
       position: sticky;
       top: var(--headerH);
       z-index: 5500;
 
-      /* ✅ 更緊密 */
-      padding: .35rem .5rem;
+      /* ✅ 更緊密：降低上下 padding，避免展開時看起來「跳」 */
+      padding: .30rem .5rem .12rem .5rem;
       border-bottom: 1px solid var(--line);
 
       background: rgba(0,0,0,.14);
@@ -244,7 +246,7 @@
     .searchRow{
       display:flex;
       align-items:center;
-      gap:.45rem;         /* ✅ 更緊密 */
+      gap:.45rem;
       width:100%;
       flex-wrap: nowrap;
       min-width:0;
@@ -259,7 +261,7 @@
       flex: 1 1 0;
       min-width: 0;
       justify-content:center;
-      padding-left: 0;    /* ✅ 讓按鈕更像均分格子 */
+      padding-left: 0;
       padding-right: 0;
     }
     .searchRow .iconBtn,
@@ -267,9 +269,9 @@
       width:auto;
     }
 
-    /* ✅ 篩選區：去掉上方多餘空間（padding 改為 0） */
+    /* ✅ 篩選區：去掉上方多餘空間 */
     .filtersArea{
-      padding: 0;                 /* ✅ 去除多餘空間 */
+      padding: 0;
       border-bottom: 1px solid var(--line);
     }
 
@@ -282,28 +284,43 @@
     }
     .collapseBtn svg{ width:1.15rem; height:1.15rem; transition: .18s transform; }
     .collapseBtn[aria-expanded="false"] svg{ transform: rotate(-90deg); }
-    .collapseBtn .t{
-      display:none;
-    }
+    .collapseBtn .t{ display:none; }
 
+    /* ✅ 重要修正：
+       1) 展開時 filtersBody 也採 sticky，top = headerH + filtersTopH
+       2) 讓它永遠緊貼在「搜尋列」下面，不會在捲動/展開時跑位
+       3) padding 改成「上面很薄」，避免視覺上像多出一塊空白
+    */
     .filtersBody{
+      position: sticky;
+      top: calc(var(--headerH) + var(--filtersTopH));
+      z-index: 5400;
+
+      background: rgba(0,0,0,.10);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+
       overflow:hidden;
       max-height: 600px;
-      transition: max-height .22s ease;
+      transition: max-height .22s ease, padding .22s ease;
 
-      /* ✅ 把 padding 放到 body 裡，讓頂部更乾淨、也跟收合一起收起來 */
-      padding: .35rem .5rem;
+      padding: .12rem .5rem .35rem .5rem; /* ✅ 讓它緊接搜尋列（上 padding 很薄） */
     }
+    html[data-theme="light"] .filtersBody{
+      background: rgba(255,255,255,.62);
+    }
+
     .filtersBody.collapsed{
       max-height: 0px;
       padding-top: 0;
       padding-bottom: 0;
+      border-bottom: 0;
     }
 
     /* ✅ 篩選列：預設橫排（大螢幕） */
     .filtersRow{
       display:flex;
-      gap:.45rem;          /* ✅ 更緊密 */
+      gap:.45rem;
       flex-wrap:wrap;
       align-items:flex-end;
       justify-content:flex-start;
@@ -313,7 +330,7 @@
     .filterItem{
       display:inline-flex;
       align-items:flex-end;
-      gap:.35rem;          /* ✅ 更緊密 */
+      gap:.35rem;
       min-width: 0;
     }
     .filterItem label{white-space:nowrap; line-height:1.1}
@@ -620,14 +637,14 @@
         width:100%;
         flex-direction:column;
         align-items:stretch;
-        gap:.45rem; /* ✅ 更緊密 */
+        gap:.45rem;
       }
       .filterItem{
         width:100%;
         display:flex;
         flex-direction:column;
         align-items:stretch;
-        gap:.30rem; /* ✅ 更緊密 */
+        gap:.30rem;
       }
       .filterItem label{
         font-size:.78rem;
@@ -876,6 +893,7 @@
 
         btnToggleFilters: $("btnToggleFilters"),
         filtersBody: $("filtersBody"),
+        filtersTop: $("filtersTop"),     // ✅ 新增：量測用
 
         btnToTop: $("btnToTop"),
 
@@ -990,8 +1008,12 @@
       };
 
       const updateDockHeights = () => {
-        const h = UI.els.topHeader?.offsetHeight || 0;
-        document.documentElement.style.setProperty("--headerH", h + "px");
+        const headerH = UI.els.topHeader?.offsetHeight || 0;
+        document.documentElement.style.setProperty("--headerH", headerH + "px");
+
+        // ✅ 新增：量測 filtersTop 高度，讓 filtersBody sticky 時能「緊接」在搜尋列下方
+        const topH = UI.els.filtersTop?.offsetHeight || 0;
+        document.documentElement.style.setProperty("--filtersTopH", topH + "px");
       };
 
       return { measureCssVarPx, getRowHPx, updateDockHeights };
@@ -1406,6 +1428,17 @@
         State.filtersCollapsed = !!collapsed;
         UI.els.btnToggleFilters.setAttribute("aria-expanded", (!State.filtersCollapsed).toString());
         UI.els.filtersBody.classList.toggle("collapsed", State.filtersCollapsed);
+
+        // ✅ 關鍵：收合/展開後高度會變，立刻更新 sticky 計算，避免「搜尋列跑位」
+        // 1) 先同步一次
+        Metrics.updateDockHeights();
+        // 2) 再等 transition 結束再補一次（更穩）
+        clearTimeout(window.__dockTimer);
+        window.__dockTimer = setTimeout(() => {
+          Metrics.updateDockHeights();
+          VirtualList.render();
+          UX.updateToTopVisible();
+        }, 260);
       };
 
       const toggleFilters = () => {
@@ -1630,6 +1663,9 @@
         // first render
         Query.apply(true);
         UX.updateToTopVisible();
+
+        // ✅ 再補一次（避免首次 fonts/layout 造成高度差）
+        setTimeout(() => Metrics.updateDockHeights(), 0);
       };
 
       return { init };
