@@ -355,6 +355,20 @@
     .sortMark{font-size:.75rem; opacity:.9}
     .sortMark.off{opacity:.35}
 
+    /* ✅ 需求：編號/歌名/歌手 標題列與內容靠左對齊
+       固定第 1 欄是 copy，後面三欄永遠是 id/title/artist */
+    .thead .th:nth-child(2),
+    .thead .th:nth-child(3),
+    .thead .th:nth-child(4){
+      justify-content:flex-start;
+      text-align:left;
+    }
+    .row .cell:nth-child(2),
+    .row .cell:nth-child(3),
+    .row .cell:nth-child(4){
+      text-align:left;
+    }
+
     .viewport{
       height: 70vh;
       overflow:auto;
@@ -723,7 +737,7 @@
         <button class="btn iconBtn settingsBtn" id="btnSettings" title="設定" aria-label="設定">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M12 15.25a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5Z" stroke="currentColor" stroke-width="1.8"/>
-            <path d="M19.4 13a7.86 7.86 0 0 0 .04-2l1.6-1.2-1.9-3.3-1.9.8a8.2 8.2 0 0 0-1.7-1l-.3-2H9.7l-.3 2a8.2 0 0 0-1.7 1l-1.9-.8-1.9 3.3 1.6 1.2a7.86 7.86 0 0 0 .04 2L4 14.2l1.9 3.3 1.9-.8c.52.42 1.1.77 1.7 1l.3 2h4.6l.3-2c.6-.23 1.18-.58 1.7-1l1.9.8 1.9-3.3-1.6-1.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M19.4 13a7.86 7.86 0 0 0 .04-2l1.6-1.2-1.9-3.3-1.9.8a8.2 8.2 0 0 0-1.7-1l-.3-2H9.7l-.3 2a8.2 8.2 0 0 0-1.7 1l-1.9-.8-1.9 3.3 1.6 1.2a7.86 7.86 0 0 0 .04 2L4 14.2l1.9 3.3 1.9-.8c.52.42 1.1.77 1.7 1l.3 2h4.6l.3-2c.6-.23 1.18-.58 1.7-1l1.9.8 1.9-3.3-1.6-1.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
           </svg>
         </button>
       </div>
@@ -871,10 +885,6 @@
 
   <!-- ===========================
        Refactor: Low coupling / High cohesion
-       - split into small modules inside one IIFE (no global leakage)
-       - event bus for communication
-       - pure domain funcs for filter/sort
-       - renderer isolated from domain/state
        =========================== -->
   <script>
   ;(() => {
@@ -927,9 +937,9 @@
       },
     });
 
-    // ---------- Event Bus (decouple modules) ----------
+    // ---------- Event Bus ----------
     const Bus = (() => {
-      const map = new Map(); // evt -> Set<fn>
+      const map = new Map();
       const on = (evt, fn) => {
         if(!map.has(evt)) map.set(evt, new Set());
         map.get(evt).add(fn);
@@ -1007,7 +1017,7 @@
       return Object.freeze({ copy });
     })();
 
-    // ---------- UI (DOM cache + helpers) ----------
+    // ---------- UI ----------
     const UI = (() => {
       const els = Object.freeze({
         countPill: Utils.$("countPill"),
@@ -1068,7 +1078,7 @@
       return Object.freeze({ els, toast, readMatchMode });
     })();
 
-    // ---------- Domain: Data normalization & index ----------
+    // ---------- Repo ----------
     const SongRepo = (() => {
       const normalizeRow = (r) => ({
         who: (r.who ?? "").toString().trim(),
@@ -1103,7 +1113,7 @@
       return Object.freeze({ build, uniqueValues });
     })();
 
-    // ---------- Domain: Query Engine (pure functions) ----------
+    // ---------- Query Engine ----------
     const QueryEngine = (() => {
       const passDropdown = (row, filters) => {
         if(filters.lang && row.lang !== filters.lang) return false;
@@ -1172,7 +1182,7 @@
       return Object.freeze({ apply });
     })();
 
-    // ---------- Columns (state + rendering header) ----------
+    // ---------- Columns ----------
     const Columns = (() => {
       const loadShown = () => {
         const obj = Storage.safeGetJSON(Config.KEYS.SHOWN, null);
@@ -1251,7 +1261,7 @@
       return Object.freeze({ loadShown, saveShown, activeCols, setGridCssVar, setMinWidth, renderHeader, toggleSort });
     })();
 
-    // ---------- Virtual List Renderer (isolated from query logic) ----------
+    // ---------- Virtual List ----------
     const VirtualList = (() => {
       const updateSpacer = (count, rowH) => {
         UI.els.spacer.style.height = (count * rowH + 8) + "px";
@@ -1324,7 +1334,7 @@
       return Object.freeze({ updateSpacer, render });
     })();
 
-    // ---------- Modals (UI only) ----------
+    // ---------- Modals ----------
     const Modals = (() => {
       const openDetail = (row) => {
         UI.els.modalTitle.textContent = row?.title ? `詳細資料：${row.title}` : "詳細資料";
@@ -1368,11 +1378,11 @@
       return Object.freeze({ openDetail, closeDetail, openSettings, closeSettings });
     })();
 
-    // ---------- Controller / App State ----------
+    // ---------- App ----------
     const App = (() => {
       const state = {
-        repo: null,                // { base, copyLine }
-        viewUIDs: [],              // result uids
+        repo: null,
+        viewUIDs: [],
         filters: { lang:"", len:"", who:"" },
         sortKey: "",
         sortDir: "",
@@ -1504,26 +1514,17 @@
         Bus.on("list:updated", updateToTopVisible);
       };
 
-      // Expose minimal API via Bus handlers (still inside closure)
       Bus.on("query:apply", (opts) => applyQuery(opts));
       Bus.on("cols:rebuild", () => rebuildColumns());
       Bus.on("filters:collapse", (v) => setFiltersCollapsed(v));
       Bus.on("ui:toast", ({msg, sub}) => UI.toast(msg, sub || ""));
 
-      return Object.freeze({
-        state,
-        init,
-        applyQuery,
-        rebuildColumns,
-        setFiltersCollapsed,
-        updateToTopVisible,
-      });
+      return Object.freeze({ state, init, applyQuery, rebuildColumns, setFiltersCollapsed, updateToTopVisible });
     })();
 
-    // ---------- Events (wiring only; no business logic) ----------
+    // ---------- Events ----------
     const Events = (() => {
       const bind = () => {
-        // Settings modal
         UI.els.btnSettings.addEventListener("click", Modals.openSettings);
         UI.els.settingsClose.addEventListener("click", Modals.closeSettings);
         UI.els.settingsDone.addEventListener("click", Modals.closeSettings);
@@ -1531,7 +1532,6 @@
           if(e.target === UI.els.settingsBack) Modals.closeSettings();
         });
 
-        // Theme toggle
         UI.els.toggleLight.addEventListener("change", () => {
           Theme.apply(UI.els.toggleLight.checked ? "light" : "dark");
           App.state.rowH = Metrics.getRowHPx();
@@ -1540,7 +1540,6 @@
           UI.toast(UI.els.toggleLight.checked ? "已切換淺色模式" : "已切換深色模式");
         });
 
-        // Show columns toggles
         const onShown = (key, checked) => {
           App.state.shown[key] = !!checked;
           Columns.saveShown(App.state.shown);
@@ -1553,13 +1552,11 @@
         UI.els.colPage.addEventListener("change", () => onShown("page", UI.els.colPage.checked));
         UI.els.colBook.addEventListener("change", () => onShown("book", UI.els.colBook.checked));
 
-        // Collapse filters
         UI.els.btnToggleFilters.addEventListener("click", () => {
           App.setFiltersCollapsed(!App.state.filtersCollapsed);
           UI.toast(App.state.filtersCollapsed ? "已收合篩選" : "已展開篩選");
         });
 
-        // Search input / apply
         UI.els.q.addEventListener("keydown", (e) => {
           if(e.key === "Enter"){
             Bus.emit("query:apply", { keepScroll:false });
@@ -1574,7 +1571,6 @@
           UI.toast("已套用篩選", `顯示 ${App.state.viewUIDs.length.toLocaleString()} 筆`);
         });
 
-        // Clear all
         UI.els.btnClearFilters.addEventListener("click", () => {
           UI.els.q.value = "";
           App.state.filters.lang = App.state.filters.len = App.state.filters.who = "";
@@ -1587,12 +1583,10 @@
           UI.toast("已清空", "文字/下拉/排序 已重置");
         });
 
-        // Dropdown filters
         UI.els.filterLang.addEventListener("change", () => { App.state.filters.lang = UI.els.filterLang.value; Bus.emit("query:apply", { keepScroll:false }); });
         UI.els.filterLen.addEventListener("change",  () => { App.state.filters.len  = UI.els.filterLen.value;  Bus.emit("query:apply", { keepScroll:false }); });
         UI.els.filterWho.addEventListener("change",  () => { App.state.filters.who  = UI.els.filterWho.value;  Bus.emit("query:apply", { keepScroll:false }); });
 
-        // Sort header click
         UI.els.thead.addEventListener("click", (e) => {
           const el = e.target.closest("[data-sort-key]");
           if(!el) return;
@@ -1604,7 +1598,6 @@
           Bus.emit("query:apply", { keepScroll:false });
         });
 
-        // Virtual scroll
         UI.els.viewport.addEventListener("scroll", () => {
           VirtualList.render({
             base: App.state.repo.base,
@@ -1616,7 +1609,6 @@
         });
         window.addEventListener("scroll", () => Bus.emit("scroll:changed"));
 
-        // Resize (debounced)
         window.addEventListener("resize", Utils.debounce(() => {
           App.state.rowH = Metrics.getRowHPx();
           Bus.emit("cols:rebuild");
@@ -1629,7 +1621,6 @@
           Bus.emit("scroll:changed");
         }, 120));
 
-        // Row click / copy click
         UI.els.rows.addEventListener("click", async (e) => {
           const copyBtn = e.target.closest("[data-copy-uid]");
           if(copyBtn){
@@ -1647,7 +1638,6 @@
           }
         });
 
-        // Detail modal close/copy
         UI.els.modalClose.addEventListener("click", () => { Modals.closeDetail(); App.state.modalUID=null; });
         UI.els.modalClose2.addEventListener("click", () => { Modals.closeDetail(); App.state.modalUID=null; });
         UI.els.modalBack.addEventListener("click", (e) => {
@@ -1661,14 +1651,12 @@
           UI.toast("已複製", App.state.repo.base[uid]?.title ? `「${App.state.repo.base[uid].title}」` : "");
         });
 
-        // Escape to close modals
         document.addEventListener("keydown", (e) => {
           if(e.key !== "Escape") return;
           if(UI.els.modalBack.classList.contains("show")) { Modals.closeDetail(); App.state.modalUID=null; }
           if(UI.els.settingsBack.classList.contains("show")) Modals.closeSettings();
         });
 
-        // To top
         UI.els.btnToTop.addEventListener("click", () => {
           UI.els.viewport?.scrollTo({ top: 0, behavior: "smooth" });
           window.scrollTo({ top: 0, behavior: "smooth" });
