@@ -1329,10 +1329,7 @@
         window.__toastTimer = setTimeout(() => els.toast.classList.remove("show"), Config.LIMITS.TOAST_MS);
       };
 
-      const readMatchMode = () =>
-        document.querySelector('input[name="matchMode"]:checked')?.value || "fuzzy";
-
-      return Object.freeze({ els, toast, readMatchMode });
+      return Object.freeze({ els, toast });
     })();
 
     // ---------- Repo ----------
@@ -1452,8 +1449,6 @@
         return shown;
       };
 
-      const saveShown = (shown) => Storage.safeSetJSON(Config.KEYS.SHOWN, shown);
-
       const activeCols = (shown) => {
         const cols = [...Config.COLS_BASE];
         const extra = Config.COLS_EXTRA;
@@ -1515,7 +1510,7 @@
         return next;
       };
 
-      return Object.freeze({ loadShown, saveShown, activeCols, setGridCssVar, setMinWidth, renderHeader, toggleSort });
+      return Object.freeze({ loadShown, activeCols, setGridCssVar, setMinWidth, renderHeader, toggleSort });
     })();
 
     // ---------- Virtual List ----------
@@ -1660,8 +1655,10 @@
       });
     })();
 
-    // ---------- Slogans ----------
+    // ---------- ✅ Slogans (FIXED: 不再把可變狀態放在 freeze 物件上) ----------
     const Slogans = (() => {
+      let _list = null; // ✅ mutable state in closure
+
       const normalize = (data) => {
         if(Array.isArray(data)) return data.map(x=>String(x)).filter(Boolean);
         if(data && typeof data === "object" && Array.isArray(data.slogans)) return data.slogans.map(x=>String(x)).filter(Boolean);
@@ -1685,24 +1682,20 @@
       };
 
       const ensureLoaded = async () => {
-        if(Slogans._list && Slogans._list.length) return Slogans._list;
+        if(Array.isArray(_list) && _list.length) return _list;
 
         const cached = loadFromCache();
         if(cached){
-          Slogans._list = cached;
-          return cached;
+          _list = cached;
+          return _list;
         }
 
         const url = (window.SLOGANS_URL || "./slogans.json");
         const json = await fetchJson(url);
         const arr = normalize(json);
-        if(arr.length){
-          Slogans._list = arr;
-          saveToCache(arr);
-          return arr;
-        }
-        Slogans._list = [];
-        return [];
+        _list = arr.length ? arr : [];
+        if(_list.length) saveToCache(_list);
+        return _list;
       };
 
       const randomOne = async () => {
@@ -1710,7 +1703,7 @@
         return Utils.pickRandom(list) || "今天就交給命運安排一首！";
       };
 
-      return Object.freeze({ ensureLoaded, randomOne, _list: null });
+      return Object.freeze({ ensureLoaded, randomOne });
     })();
 
     // ---------- Draw Engine ----------
@@ -1891,6 +1884,7 @@
         setFiltersCollapsed(false);
         applyQuery({ keepScroll:true });
 
+        // ✅ 預載標語（不影響抽歌流程）
         Slogans.ensureLoaded().catch(()=>{});
       };
 
@@ -2020,9 +2014,8 @@
         });
 
         // ==========================
-        // ✅ 抽歌：修正「按開始抽沒跳結果」
-        // - 保證：先渲染 drawResBack，再 show
-        // - 避免：連點造成狀態混亂（isDrawing guard）
+        // ✅ 抽歌（修正：按開始抽沒跳結果）
+        // 主要 bug：Slogans 先前把 _list 放在 freeze 物件上，strict mode 會 throw
         // ==========================
         UI.els.btnDraw.addEventListener("click", () => {
           UI.els.drawHint.textContent = `提示：目前顯示 ${App.state.viewUIDs.length.toLocaleString()} 筆，抽歌會以此為母體。`;
@@ -2064,16 +2057,18 @@
             UI.els.drawResTitle.textContent = `抽到啦 🎉（${k} 首）`;
             await Draw.renderInto(picked, UI.els.drawResSlogan, UI.els.drawResList, App.state.repo.base);
 
-            // ✅ 再顯示結果視窗（修正：一定會跳出）
+            // ✅ 再顯示結果視窗
             if(!alsoKeepResOpen){
               Modals.closeDraw();
               Modals.openDrawRes();
             }else{
-              // reroll：結果窗已開，確保仍是 show
               Modals.openDrawRes();
             }
 
             UI.toast("抽到了！", `${k} / ${pool.length.toLocaleString()}（從目前篩選結果抽）`);
+          }catch(err){
+            console.error(err);
+            UI.toast("抽歌失敗", "請看 Console（F12）");
           }finally{
             UI.els.btnDoDraw.disabled = false;
             UI.els.btnReroll.disabled = false;
@@ -2082,7 +2077,6 @@
         };
 
         UI.els.btnDoDraw.addEventListener("click", () => doDrawOnce(false));
-
         UI.els.btnReroll.addEventListener("click", () => doDrawOnce(true));
 
         UI.els.btnCopyDraw.addEventListener("click", async () => {
