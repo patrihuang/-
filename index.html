@@ -232,8 +232,7 @@
       top: var(--headerH);
       z-index: 5500;
 
-      /* ✅ 更緊密：降低上下 padding，避免展開時看起來「跳」 */
-      padding: .30rem .5rem .12rem .5rem;
+      padding: .30rem .5rem .22rem .5rem; /* ✅ 底部稍微加一點，容納「篩選按鈕列」 */
       border-bottom: 1px solid var(--line);
 
       background: rgba(0,0,0,.14);
@@ -243,6 +242,7 @@
       background: rgba(255,255,255,.72);
     }
 
+    /* ✅ 查詢那一行（純查詢，不含收合按鈕） */
     .searchRow{
       display:flex;
       align-items:center;
@@ -252,9 +252,9 @@
       min-width:0;
     }
 
-    /* ✅ 搜尋至少一半寬度；其他三個平均吃剩下 */
+    /* ✅ 搜尋至少一半寬度；（現在只有🔍與×兩顆）平均吃剩下 */
     .searchRow input{
-      flex: 3 1 0;       /* 3 / (3+1+1+1) = 50% */
+      flex: 3 1 0;
       min-width: 0;
     }
     .searchRow .btn{
@@ -264,15 +264,16 @@
       padding-left: 0;
       padding-right: 0;
     }
-    .searchRow .iconBtn,
     .searchRow .xBtn{
       width:auto;
     }
 
-    /* ✅ 篩選區：去掉上方多餘空間 */
-    .filtersArea{
-      padding: 0;
-      border-bottom: 1px solid var(--line);
+    /* ✅ 新增：收合/展開按鈕獨立一行（在「語言」上方） */
+    .toggleRow{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      margin-top: .25rem;
     }
 
     /* ✅ B：極小的「篩選」收合按鈕 */
@@ -281,16 +282,21 @@
       border-radius:12px;
       font-weight:900;
       letter-spacing:.5px;
+      height: var(--ctlH);
+      width: var(--ctlH);
+      justify-content:center;
     }
     .collapseBtn svg{ width:1.15rem; height:1.15rem; transition: .18s transform; }
     .collapseBtn[aria-expanded="false"] svg{ transform: rotate(-90deg); }
     .collapseBtn .t{ display:none; }
 
-    /* ✅ 重要修正：
-       1) 展開時 filtersBody 也採 sticky，top = headerH + filtersTopH
-       2) 讓它永遠緊貼在「搜尋列」下面，不會在捲動/展開時跑位
-       3) padding 改成「上面很薄」，避免視覺上像多出一塊空白
-    */
+    /* ✅ 篩選區：去掉上方多餘空間 */
+    .filtersArea{
+      padding: 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    /* ✅ filtersBody sticky：永遠緊接在 filtersTop 下方 */
     .filtersBody{
       position: sticky;
       top: calc(var(--headerH) + var(--filtersTopH));
@@ -304,7 +310,7 @@
       max-height: 600px;
       transition: max-height .22s ease, padding .22s ease;
 
-      padding: .12rem .5rem .35rem .5rem; /* ✅ 讓它緊接搜尋列（上 padding 很薄） */
+      padding: .12rem .5rem .35rem .5rem;
     }
     html[data-theme="light"] .filtersBody{
       background: rgba(255,255,255,.62);
@@ -682,9 +688,8 @@
     </header>
 
     <div class="card">
-      <!-- ✅ 篩選區（內含：搜尋上方新面板 + 下拉篩選） -->
       <div class="filtersArea" id="filtersArea">
-        <!-- ✅ 新增：篩選面板上方的搜尋區塊（置頂） -->
+        <!-- ✅ 置頂：查詢列 +（獨立一行的）收合/展開按鈕 -->
         <div class="filtersTop" id="filtersTop">
           <div class="searchRow">
             <input id="q" placeholder="查詢（點🔍）" />
@@ -697,7 +702,10 @@
             </button>
 
             <button class="btn xBtn" id="btnClearFilters" title="取消篩選/清空" aria-label="取消篩選">×</button>
+          </div>
 
+          <!-- ✅ 需求：展開時「收合按鈕」在語言上方（獨立一行） -->
+          <div class="toggleRow">
             <button class="btn collapseBtn" id="btnToggleFilters" aria-expanded="true" title="收合/展開篩選" aria-label="收合/展開篩選">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M8 10l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -893,7 +901,7 @@
 
         btnToggleFilters: $("btnToggleFilters"),
         filtersBody: $("filtersBody"),
-        filtersTop: $("filtersTop"),     // ✅ 新增：量測用
+        filtersTop: $("filtersTop"),
 
         btnToTop: $("btnToTop"),
 
@@ -1011,7 +1019,6 @@
         const headerH = UI.els.topHeader?.offsetHeight || 0;
         document.documentElement.style.setProperty("--headerH", headerH + "px");
 
-        // ✅ 新增：量測 filtersTop 高度，讓 filtersBody sticky 時能「緊接」在搜尋列下方
         const topH = UI.els.filtersTop?.offsetHeight || 0;
         document.documentElement.style.setProperty("--filtersTopH", topH + "px");
       };
@@ -1429,10 +1436,8 @@
         UI.els.btnToggleFilters.setAttribute("aria-expanded", (!State.filtersCollapsed).toString());
         UI.els.filtersBody.classList.toggle("collapsed", State.filtersCollapsed);
 
-        // ✅ 關鍵：收合/展開後高度會變，立刻更新 sticky 計算，避免「搜尋列跑位」
-        // 1) 先同步一次
+        // ✅ 關鍵：收合/展開後 filtersTop 高度會變（因為按鈕列仍在 filtersTop 內）
         Metrics.updateDockHeights();
-        // 2) 再等 transition 結束再補一次（更穩）
         clearTimeout(window.__dockTimer);
         window.__dockTimer = setTimeout(() => {
           Metrics.updateDockHeights();
