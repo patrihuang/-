@@ -259,22 +259,6 @@
     }
 
     /* ✅ (3) 收合 UI */
-    .filtersHead{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:.6rem;
-      margin-bottom:.45rem;
-    }
-    .filtersTitle{
-      display:flex;
-      align-items:center;
-      gap:.5rem;
-      color:var(--muted);
-      font-size:.85rem;
-      font-weight:900;
-      user-select:none;
-    }
     .collapseBtn{
       height:var(--ctlH);
       padding: var(--ctlPadY) .75rem;
@@ -289,7 +273,7 @@
 
     .filtersBody{
       overflow:hidden;
-      max-height: 600px; /* 夠大即可，會用 JS 計算更精準 */
+      max-height: 600px; /* 夠大即可，JS 只切 class */
       transition: max-height .22s ease;
     }
     .filtersBody.collapsed{
@@ -642,780 +626,996 @@
 </head>
 
 <body>
-<div class="wrap">
-  <header id="topHeader">
-    <div>
-      <h1>二結點歌本速查</h1>
-      <div class="sub">>Happy Happy</div>
-    </div>
+  <div class="wrap">
+    <header id="topHeader">
+      <div>
+        <h1>二結點歌本速查</h1>
+        <div class="sub">>Happy Happy</div>
+      </div>
 
-    <div class="metaRow">
-      <div class="pill" id="countPill">載入中…</div>
-      <button class="btn iconBtn settingsBtn" id="btnSettings" title="設定" aria-label="設定">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 15.25a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5Z" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M19.4 13a7.86 7.86 0 0 0 .04-2l1.6-1.2-1.9-3.3-1.9.8a8.2 8.2 0 0 0-1.7-1l-.3-2H9.7l-.3 2a8.2 8.2 0 0 0-1.7 1l-1.9-.8-1.9 3.3 1.6 1.2a7.86 7.86 0 0 0 .04 2L4 14.2l1.9 3.3 1.9-.8c.52.42 1.1.77 1.7 1l.3 2h4.6l.3-2c.6-.23 1.18-.58 1.7-1l1.9.8 1.9-3.3-1.6-1.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-        </svg>
-      </button>
-    </div>
-  </header>
-
-  <div class="card">
-    <!-- ✅ 只置頂「查詢」那行 -->
-    <div class="searchDock" id="searchDock">
-      <div class="searchRow">
-        <input id="q" placeholder="查詢（點🔍）" />
-        <button class="btn primary iconBtn" id="btnFilter" title="套用文字查詢" aria-label="套用文字查詢">
+      <div class="metaRow">
+        <div class="pill" id="countPill">載入中…</div>
+        <button class="btn iconBtn settingsBtn" id="btnSettings" title="設定" aria-label="設定">
           <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
-            <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M12 15.25a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5Z" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M19.4 13a7.86 7.86 0 0 0 .04-2l1.6-1.2-1.9-3.3-1.9.8a8.2 8.2 0 0 0-1.7-1l-.3-2H9.7l-.3 2a8.2 8.2 0 0 0-1.7 1l-1.9-.8-1.9 3.3 1.6 1.2a7.86 7.86 0 0 0 .04 2L4 14.2l1.9 3.3 1.9-.8c.52.42 1.1.77 1.7 1l.3 2h4.6l.3-2c.6-.23 1.18-.58 1.7-1l1.9.8 1.9-3.3-1.6-1.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
           </svg>
         </button>
-        <button class="btn xBtn" id="btnClearFilters" title="取消篩選/清空" aria-label="取消篩選">×</button>
-
-        <!-- ✅ (3) 收合篩選 -->
-        <button class="btn collapseBtn" id="btnToggleFilters" aria-expanded="true" title="收合/展開篩選">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M8 10l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          篩選
-        </button>
       </div>
-    </div>
+    </header>
 
-    <!-- ✅ 篩選區：不置頂，跟著內容滑動 -->
-    <div class="filtersArea" id="filtersArea">
-      <div class="filtersBody" id="filtersBody">
-        <div class="filtersRow">
-          <div class="filterItem">
-            <label for="filterLang">語言</label>
-            <select id="filterLang"></select>
-          </div>
+    <div class="card">
+      <!-- ✅ 只置頂「查詢」那行 -->
+      <div class="searchDock" id="searchDock">
+        <div class="searchRow">
+          <input id="q" placeholder="查詢（點🔍）" />
+          <button class="btn primary iconBtn" id="btnFilter" title="套用文字查詢" aria-label="套用文字查詢">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="btn xBtn" id="btnClearFilters" title="取消篩選/清空" aria-label="取消篩選">×</button>
 
-          <div class="filterItem">
-            <label for="filterLen">字數</label>
-            <select id="filterLen"></select>
-          </div>
+          <!-- ✅ (3) 收合篩選 -->
+          <button class="btn collapseBtn" id="btnToggleFilters" aria-expanded="true" title="收合/展開篩選">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M8 10l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            篩選
+          </button>
+        </div>
+      </div>
 
-          <div class="filterItem">
-            <label for="filterWho">誰的歌</label>
-            <select id="filterWho"></select>
+      <!-- ✅ 篩選區：不置頂，跟著內容滑動 -->
+      <div class="filtersArea" id="filtersArea">
+        <div class="filtersBody" id="filtersBody">
+          <div class="filtersRow">
+            <div class="filterItem">
+              <label for="filterLang">語言</label>
+              <select id="filterLang"></select>
+            </div>
+
+            <div class="filterItem">
+              <label for="filterLen">字數</label>
+              <select id="filterLen"></select>
+            </div>
+
+            <div class="filterItem">
+              <label for="filterWho">誰的歌</label>
+              <select id="filterWho"></select>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="table-scroll" id="tableScroll">
-      <div class="table-min-width" id="tableMinWidth">
-        <div class="thead" id="thead"></div>
+      <div class="table-scroll" id="tableScroll">
+        <div class="table-min-width" id="tableMinWidth">
+          <div class="thead" id="thead"></div>
 
-        <div class="viewport" id="viewport">
-          <div class="spacer" id="spacer"></div>
-          <div class="rows" id="rows"></div>
+          <div class="viewport" id="viewport">
+            <div class="spacer" id="spacer"></div>
+            <div class="rows" id="rows"></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ✅ (4) 滑動至頂部 -->
-<button class="btn iconBtn toTop" id="btnToTop" title="滑到頂部" aria-label="滑到頂部">
-  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="M12 5l7 7M12 5L5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M12 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-  </svg>
-</button>
+  <!-- ✅ (4) 滑動至頂部 -->
+  <button class="btn iconBtn toTop" id="btnToTop" title="滑到頂部" aria-label="滑到頂部">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 5l7 7M12 5L5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
 
-<div class="toast" id="toast">
-  <div id="toastMsg">OK</div>
-  <div class="t" id="toastSub"></div>
-</div>
+  <div class="toast" id="toast">
+    <div id="toastMsg">OK</div>
+    <div class="t" id="toastSub"></div>
+  </div>
 
-<!-- 詳細資料 modal -->
-<div class="modalBack" id="modalBack" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="modal">
-    <div class="modalHead">
-      <div class="modalTitle" id="modalTitle">詳細資料</div>
-      <button class="modalClose" id="modalClose">關閉</button>
-    </div>
-    <div class="modalBody" id="modalBody"></div>
-    <div class="modalFoot">
-      <button class="btn" id="modalCopy">📋 複製這一筆</button>
-      <button class="btn" id="modalClose2">關閉</button>
+  <!-- 詳細資料 modal -->
+  <div class="modalBack" id="modalBack" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal">
+      <div class="modalHead">
+        <div class="modalTitle" id="modalTitle">詳細資料</div>
+        <button class="modalClose" id="modalClose">關閉</button>
+      </div>
+      <div class="modalBody" id="modalBody"></div>
+      <div class="modalFoot">
+        <button class="btn" id="modalCopy">📋 複製這一筆</button>
+        <button class="btn" id="modalClose2">關閉</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- ✅ 設定 modal -->
-<div class="modalBack" id="settingsBack" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="modal" style="width:min(760px, 100%);">
-    <div class="modalHead">
-      <div class="modalTitle">設定</div>
-      <button class="modalClose" id="settingsClose">關閉</button>
-    </div>
+  <!-- ✅ 設定 modal -->
+  <div class="modalBack" id="settingsBack" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" style="width:min(760px, 100%);">
+      <div class="modalHead">
+        <div class="modalTitle">設定</div>
+        <button class="modalClose" id="settingsClose">關閉</button>
+      </div>
 
-    <div class="settingsBody">
-      <div class="settingsGrid">
+      <div class="settingsBody">
+        <div class="settingsGrid">
 
-        <div class="settingsSection">
-          <span style="color:var(--muted); font-size:.85rem;">顯示欄位：</span>
-          <label class="chip"><input type="checkbox" id="colLang" /><span>語言</span></label>
-          <label class="chip"><input type="checkbox" id="colLen" /><span>字數</span></label>
-          <label class="chip"><input type="checkbox" id="colWho" /><span>誰的歌</span></label>
-          <label class="chip"><input type="checkbox" id="colPage" /><span>頁數</span></label>
-          <label class="chip"><input type="checkbox" id="colBook" /><span>歌本</span></label>
-        </div>
+          <div class="settingsSection">
+            <span style="color:var(--muted); font-size:.85rem;">顯示欄位：</span>
+            <label class="chip"><input type="checkbox" id="colLang" /><span>語言</span></label>
+            <label class="chip"><input type="checkbox" id="colLen" /><span>字數</span></label>
+            <label class="chip"><input type="checkbox" id="colWho" /><span>誰的歌</span></label>
+            <label class="chip"><input type="checkbox" id="colPage" /><span>頁數</span></label>
+            <label class="chip"><input type="checkbox" id="colBook" /><span>歌本</span></label>
+          </div>
 
-        <div class="settingsSection">
-          <span style="color:var(--muted); font-size:.85rem;">比對方式：</span>
-          <div class="radioWrap" role="group" aria-label="比對方式">
-            <label>
-              <input type="radio" name="matchMode" id="modeFuzzy" value="fuzzy" checked>
-              <span>模糊比對</span>
+          <div class="settingsSection">
+            <span style="color:var(--muted); font-size:.85rem;">比對方式：</span>
+            <div class="radioWrap" role="group" aria-label="比對方式">
+              <label>
+                <input type="radio" name="matchMode" id="modeFuzzy" value="fuzzy" checked>
+                <span>模糊比對</span>
+              </label>
+              <label>
+                <input type="radio" name="matchMode" id="modeExact" value="exact">
+                <span>精準比對</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settingsSection">
+            <label class="chip" title="切換淺色模式（會記住）">
+              <input type="checkbox" id="toggleLight" />
+              <span>淺色模式</span>
             </label>
-            <label>
-              <input type="radio" name="matchMode" id="modeExact" value="exact">
-              <span>精準比對</span>
-            </label>
+          </div>
+
+          <div style="color:var(--muted); font-size:.78rem; line-height:1.35;">
+            小提醒：欄位變更／主題切換會自動重算表格寬度與列高，避免卡頓與跑版。
           </div>
         </div>
-
-        <div class="settingsSection">
-          <label class="chip" title="切換淺色模式（會記住）">
-            <input type="checkbox" id="toggleLight" />
-            <span>淺色模式</span>
-          </label>
-        </div>
-
-        <div style="color:var(--muted); font-size:.78rem; line-height:1.35;">
-          小提醒：欄位變更／主題切換會自動重算表格寬度與列高，避免卡頓與跑版。
-        </div>
       </div>
-    </div>
 
-    <div class="modalFoot">
-      <button class="btn primary" id="settingsDone">完成</button>
+      <div class="modalFoot">
+        <button class="btn primary" id="settingsDone">完成</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script src="./songs.js"></script>
+  <script src="./songs.js"></script>
 
-<script>
-if (!window.SONGS || !Array.isArray(window.SONGS)) {
-  alert("songs.js 載入失敗，請確認檔案存在");
-  throw new Error("SONGS not found");
-}
-const SONGS = window.SONGS;
+  <script>
+  ;(() => {
+    "use strict";
 
-// ===== 小工具 =====
-const $ = (id) => document.getElementById(id);
-const toast = (msg, sub="") => {
-  $("toastMsg").textContent = msg;
-  $("toastSub").textContent = sub;
-  $("toast").classList.add("show");
-  clearTimeout(window.__toastTimer);
-  window.__toastTimer = setTimeout(() => $("toast").classList.remove("show"), 2000);
-};
+    // =========================
+    // 0) Boot guard
+    // =========================
+    if (!window.SONGS || !Array.isArray(window.SONGS)) {
+      alert("songs.js 載入失敗，請確認檔案存在");
+      throw new Error("SONGS not found");
+    }
 
-function normalize(s){ return (s ?? "").toString().toLowerCase().trim(); }
-function escapeHtml(s){
-  return (s ?? "").toString()
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-async function copyToClipboard(text){
-  try{ await navigator.clipboard.writeText(text); }
-  catch(_){
-    const ta = document.createElement("textarea");
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    document.body.removeChild(ta);
-  }
-}
-function currentMatchMode(){
-  return document.querySelector('input[name="matchMode"]:checked')?.value || "fuzzy";
-}
+    // =========================
+    // 1) Constants / Schema
+    // =========================
+    const SONGS = window.SONGS;
 
-/* ✅ Light mode (記住選擇) */
-const THEME_KEY = "songbook_theme";
-function setTheme(theme){
-  if(theme === "light") document.documentElement.setAttribute("data-theme","light");
-  else document.documentElement.removeAttribute("data-theme");
-  try{ localStorage.setItem(THEME_KEY, theme); }catch(_){}
-}
-function getTheme(){
-  try{ return localStorage.getItem(THEME_KEY) || "dark"; }catch(_){ return "dark"; }
-}
-
-/* ✅ 記住設定欄位顯示 */
-const SHOWN_KEY = "songbook_shown_cols_v2";
-
-/* ✅ 讓虛擬清單列高跟 CSS --rowH 同步 */
-function getRowHPx(){
-  const v = getComputedStyle(document.documentElement).getPropertyValue("--rowH").trim();
-  const probe = document.createElement("div");
-  probe.style.position = "absolute";
-  probe.style.left = "-99999px";
-  probe.style.width = v;
-  document.body.appendChild(probe);
-  const px = probe.getBoundingClientRect().width;
-  document.body.removeChild(probe);
-  return Math.max(24, Math.round(px));
-}
-
-/* ✅ 量測任意 CSS var 實際 px */
-function measureVarPx(varName){
-  const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
-  const probe = document.createElement("div");
-  probe.style.position = "absolute";
-  probe.style.left = "-99999px";
-  probe.style.width = raw;
-  document.body.appendChild(probe);
-  const px = probe.getBoundingClientRect().width;
-  document.body.removeChild(probe);
-  return px;
-}
-
-/* ✅ 置頂：量測 header 高度，讓 searchDock 緊貼在 header 下方 */
-function updateDockHeights(){
-  const h = $("topHeader")?.offsetHeight || 0;
-  document.documentElement.style.setProperty("--headerH", h + "px");
-}
-
-/* ✅ 設定 Modal 開關 */
-function openSettings(){
-  $("settingsBack").classList.add("show");
-  $("settingsBack").setAttribute("aria-hidden","false");
-}
-function closeSettings(){
-  $("settingsBack").classList.remove("show");
-  $("settingsBack").setAttribute("aria-hidden","true");
-}
-
-/* ✅ (3) 收合篩選（預設展開） */
-let filtersCollapsed = false;
-function setFiltersCollapsed(v){
-  filtersCollapsed = !!v;
-  const body = $("filtersBody");
-  const btn = $("btnToggleFilters");
-
-  btn.setAttribute("aria-expanded", (!filtersCollapsed).toString());
-  if(filtersCollapsed){
-    body.classList.add("collapsed");
-  }else{
-    body.classList.remove("collapsed");
-    // 展開時用 scrollHeight 讓動畫更準（避免小螢幕高度變化）
-    requestAnimationFrame(() => {
-      // 不用寫死高度，只要確保 maxHeight 夠
-      // 這裡保留 class 切換即可（CSS max-height 600px）
+    const KEYS = Object.freeze({
+      THEME: "songbook_theme",
+      SHOWN: "songbook_shown_cols_v2",
     });
-  }
-}
-function toggleFilters(){
-  setFiltersCollapsed(!filtersCollapsed);
-}
 
-/* ✅ (4) 滑動至頂部（主要是表格 viewport） */
-function scrollToTop(){
-  const vp = $("viewport");
-  if(vp){
-    vp.scrollTo({ top: 0, behavior: "smooth" });
-  }
-  // 若頁面本身也有捲動，順便回頂（不影響桌機）
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-function updateToTopVisible(){
-  const vp = $("viewport");
-  const show = (vp && vp.scrollTop > 220) || window.scrollY > 220;
-  $("btnToTop").classList.toggle("show", !!show);
-}
-
-// ===== 狀態 =====
-let base = [];
-let viewUIDs = [];
-let copyLine = [];
-
-let sortKey = "";
-let sortDir = "";
-
-const shown = { lang:false, len:false, who:false, page:false, book:false };
-const filters = { lang:"", len:"", who:"" };
-
-// ===== 欄位定義 =====
-const COLS_BASE = [
-  { key:"copy",  label:"",     sortable:false, widthVar:"--copyCol" },
-  { key:"id",    label:"編號", sortable:true,  widthVar:"--colFixed", wrap2:true },
-  { key:"title", label:"歌名", sortable:true,  widthVar:"--colFixed", wrap2:true },
-  { key:"artist",label:"歌手", sortable:true,  widthVar:"--colFixed", wrap2:true },
-];
-const COLS_EXTRA = [
-  { key:"lang", label:"語言", sortable:true, widthVar:"--colLang" },
-  { key:"len",  label:"字數", sortable:true, widthVar:"--colLen" },
-  { key:"who",  label:"誰的歌", sortable:true, widthVar:"--colWho" },
-  { key:"page", label:"頁數", sortable:true, widthVar:"--colPage" },
-  { key:"book", label:"歌本", sortable:true, widthVar:"--colWho" },
-];
-
-// ===== 虛擬清單設定 =====
-let ROW_H = 72;
-const OVERSCAN = 10;
-
-// ===== 初始化 =====
-function init(){
-  const theme = getTheme();
-  setTheme(theme);
-
-  updateDockHeights();
-  ROW_H = getRowHPx();
-
-  loadShownSettings();
-
-  $("toggleLight").checked = (theme === "light");
-  $("colLang").checked = shown.lang;
-  $("colLen").checked  = shown.len;
-  $("colWho").checked  = shown.who;
-  $("colPage").checked = shown.page;
-  $("colBook").checked = shown.book;
-
-  base = SONGS.map(r => ({
-    who: (r.who ?? "").toString().trim(),
-    id: (r.id ?? "").toString().trim(),
-    title: (r.title ?? "").toString().trim(),
-    artist: (r.artist ?? "").toString().trim(),
-    lang: (r.lang ?? "").toString().trim(),
-    page: (r.page ?? "").toString().trim(),
-    len: (r.len ?? "").toString().trim(),
-    book: ((r.book ?? r.songbook ?? r.bookName ?? "")).toString().trim(),
-  }));
-
-  copyLine = base.map(r => [
-    r.who, r.id, r.title, r.artist, r.lang, r.page, r.len, r.book
-  ].filter(x => x !== "").join("\t"));
-
-  buildFilterOptions();
-  bindUI();
-
-  // ✅ 預設展開
-  setFiltersCollapsed(false);
-
-  rebuildColumnsAndHeader();
-  applyFilterSortRender(true);
-  updateToTopVisible();
-}
-
-/* ✅ 記住/還原欄位顯示 */
-function saveShownSettings(){
-  try{ localStorage.setItem(SHOWN_KEY, JSON.stringify(shown)); }catch(_){}
-}
-function loadShownSettings(){
-  try{
-    const raw = localStorage.getItem(SHOWN_KEY);
-    if(!raw) return;
-    const obj = JSON.parse(raw);
-    if(obj && typeof obj === "object"){
-      for(const k of ["lang","len","who","page","book"]){
-        if(typeof obj[k] === "boolean") shown[k] = obj[k];
-      }
-    }
-  }catch(_){}
-}
-
-// ===== 下拉選單選項 =====
-const MAX_OPTIONS = 250;
-function uniqueValues(key){
-  const set = new Set();
-  for(const r of base){
-    const v = (r[key] ?? "").toString().trim();
-    if(v) set.add(v);
-  }
-  return Array.from(set);
-}
-function setSelectOptions(selectEl, values, placeholder="全部"){
-  selectEl.innerHTML = "";
-  selectEl.appendChild(new Option(placeholder, ""));
-  if(values.length > MAX_OPTIONS){
-    const opt = new Option(`（選項太多：${values.length}）`, "");
-    opt.disabled = true;
-    selectEl.appendChild(opt);
-    return;
-  }
-  for(const v of values) selectEl.appendChild(new Option(v, v));
-}
-function buildFilterOptions(){
-  const langs = uniqueValues("lang").sort((a,b)=>a.localeCompare(b, "zh-Hant"));
-  const whos  = uniqueValues("who").sort((a,b)=>a.localeCompare(b, "zh-Hant"));
-  const lens  = uniqueValues("len").sort((a,b)=> (Number(a)||0) - (Number(b)||0));
-  setSelectOptions($("filterLang"), langs, "全部");
-  setSelectOptions($("filterLen"), lens, "全部");
-  setSelectOptions($("filterWho"), whos, "全部");
-}
-
-// ===== UI 綁定 =====
-function bindUI(){
-  $("btnSettings").addEventListener("click", openSettings);
-  $("settingsClose").addEventListener("click", closeSettings);
-  $("settingsDone").addEventListener("click", closeSettings);
-  $("settingsBack").addEventListener("click", (e) => {
-    if(e.target === $("settingsBack")) closeSettings();
-  });
-
-  $("toggleLight").addEventListener("change", () => {
-    setTheme($("toggleLight").checked ? "light" : "dark");
-    updateDockHeights();
-    ROW_H = getRowHPx();
-    rebuildColumnsAndHeader();
-    applyFilterSortRender(true);
-    toast($("toggleLight").checked ? "已切換淺色模式" : "已切換深色模式");
-  });
-
-  // ✅ (3) 收合篩選
-  $("btnToggleFilters").addEventListener("click", () => {
-    toggleFilters();
-    toast(filtersCollapsed ? "已收合篩選" : "已展開篩選");
-  });
-
-  // ✅ (4) 滑到頂部
-  $("btnToTop").addEventListener("click", scrollToTop);
-
-  $("q").addEventListener("keydown", (e) => {
-    if(e.key === "Enter"){
-      applyFilterSortRender();
-      toast("已套用文字查詢", `顯示 ${viewUIDs.length.toLocaleString()} 筆`);
-    }else if(e.key === "Escape"){
-      $("q").value = "";
-      toast("已清空文字輸入", "（不自動篩選）");
-    }
-  });
-  $("btnFilter").addEventListener("click", () => {
-    applyFilterSortRender();
-    toast("已套用篩選", `顯示 ${viewUIDs.length.toLocaleString()} 筆`);
-  });
-
-  $("btnClearFilters").addEventListener("click", () => {
-    $("q").value = "";
-    filters.lang = filters.len = filters.who = "";
-    $("filterLang").value = "";
-    $("filterLen").value = "";
-    $("filterWho").value = "";
-    sortKey = ""; sortDir = "";
-    rebuildColumnsAndHeader();
-    applyFilterSortRender();
-    toast("已清空", "文字/下拉/排序 已重置");
-  });
-
-  $("filterLang").addEventListener("change", () => { filters.lang = $("filterLang").value; applyFilterSortRender(); });
-  $("filterLen").addEventListener("change",  () => { filters.len  = $("filterLen").value;  applyFilterSortRender(); });
-  $("filterWho").addEventListener("change",  () => { filters.who  = $("filterWho").value;  applyFilterSortRender(); });
-
-  $("colLang").addEventListener("change", () => { shown.lang = $("colLang").checked; saveShownSettings(); rebuildColumnsAndHeader(); applyFilterSortRender(true); });
-  $("colLen").addEventListener("change",  () => { shown.len  = $("colLen").checked;  saveShownSettings(); rebuildColumnsAndHeader(); applyFilterSortRender(true); });
-  $("colWho").addEventListener("change",  () => { shown.who  = $("colWho").checked;  saveShownSettings(); rebuildColumnsAndHeader(); applyFilterSortRender(true); });
-  $("colPage").addEventListener("change", () => { shown.page = $("colPage").checked; saveShownSettings(); rebuildColumnsAndHeader(); applyFilterSortRender(true); });
-  $("colBook").addEventListener("change", () => { shown.book = $("colBook").checked; saveShownSettings(); rebuildColumnsAndHeader(); applyFilterSortRender(true); });
-
-  $("viewport").addEventListener("scroll", () => {
-    render();
-    updateToTopVisible();
-  });
-  window.addEventListener("scroll", updateToTopVisible);
-
-  window.addEventListener("resize", () => {
-    updateDockHeights();
-    ROW_H = getRowHPx();
-    rebuildColumnsAndHeader();
-    render();
-    updateToTopVisible();
-  });
-
-  $("rows").addEventListener("click", async (e) => {
-    const copyBtn = e.target.closest("[data-copy-uid]");
-    if(copyBtn){
-      e.stopPropagation();
-      const uid = Number(copyBtn.getAttribute("data-copy-uid"));
-      await copyToClipboard(copyLine[uid] ?? "");
-      toast("已複製", base[uid]?.title ? `「${base[uid].title}」` : "");
-      return;
-    }
-    const row = e.target.closest("[data-row-uid]");
-    if(row){
-      const uid = Number(row.getAttribute("data-row-uid"));
-      openModal(uid);
-    }
-  });
-
-  $("modalClose").addEventListener("click", closeModal);
-  $("modalClose2").addEventListener("click", closeModal);
-  $("modalBack").addEventListener("click", (e) => {
-    if(e.target === $("modalBack")) closeModal();
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if(e.key === "Escape"){
-      if($("modalBack").classList.contains("show")) closeModal();
-      if($("settingsBack").classList.contains("show")) closeSettings();
-    }
-  });
-  $("modalCopy").addEventListener("click", async () => {
-    const uid = window.__modalUID;
-    if(uid == null) return;
-    await copyToClipboard(copyLine[uid] ?? "");
-    toast("已複製", base[uid]?.title ? `「${base[uid].title}」` : "");
-  });
-}
-
-// ===== 欄位 / 表頭 / Grid =====
-function getActiveCols(){
-  const cols = [...COLS_BASE];
-  if(shown.lang) cols.push(COLS_EXTRA.find(c=>c.key==="lang"));
-  if(shown.len)  cols.push(COLS_EXTRA.find(c=>c.key==="len"));
-  if(shown.who)  cols.push(COLS_EXTRA.find(c=>c.key==="who"));
-  if(shown.page) cols.push(COLS_EXTRA.find(c=>c.key==="page"));
-  if(shown.book) cols.push(COLS_EXTRA.find(c=>c.key==="book"));
-  return cols.filter(Boolean);
-}
-
-function rebuildColumnsAndHeader(){
-  const cols = getActiveCols();
-
-  const parts = cols.map(c => `var(${c.widthVar})`);
-  document.documentElement.style.setProperty("--grid", parts.join(" "));
-
-  let minW = 0;
-  for(const c of cols){
-    const w = measureVarPx(c.widthVar);
-    minW += w + 16;
-  }
-  $("tableMinWidth").style.minWidth = Math.max(420, Math.ceil(minW)) + "px";
-
-  const thead = $("thead");
-  let html = "";
-  for(const c of cols){
-    if(c.key === "copy"){
-      html += `<div class="th"></div>`;
-      continue;
-    }
-    const isActive = (sortKey === c.key);
-    const mark =
-      !isActive ? `<span class="sortMark off">↕</span>` :
-      (sortDir === "asc") ? `<span class="sortMark">↑</span>` :
-      (sortDir === "desc") ? `<span class="sortMark">↓</span>` :
-      `<span class="sortMark off">↕</span>`;
-
-    html += `
-      <div class="th sortable" data-sort-key="${c.key}">
-        <span>${escapeHtml(c.label)}</span>
-        ${mark}
-      </div>
-    `;
-  }
-  thead.innerHTML = html;
-
-  thead.onclick = (e) => {
-    const el = e.target.closest("[data-sort-key]");
-    if(!el) return;
-    const key = el.getAttribute("data-sort-key");
-    if(sortKey !== key){
-      sortKey = key;
-      sortDir = "asc";
-    }else{
-      if(sortDir === "asc") sortDir = "desc";
-      else if(sortDir === "desc"){ sortKey = ""; sortDir = ""; }
-      else sortDir = "asc";
-    }
-    rebuildColumnsAndHeader();
-    applyFilterSortRender();
-  };
-}
-
-// ===== 篩選 / 排序 =====
-function passDropdownFilters(r){
-  if(filters.lang && r.lang !== filters.lang) return false;
-  if(filters.len  && r.len  !== filters.len)  return false;
-  if(filters.who  && r.who  !== filters.who)  return false;
-  return true;
-}
-function combinedText(r){
-  return normalize([r.who, r.id, r.title, r.artist, r.lang, r.page, r.len, r.book].join(" "));
-}
-function passTextFilter(r){
-  const q = normalize($("q").value);
-  if(!q) return true;
-  const mode = currentMatchMode();
-  const t = combinedText(r);
-  if(mode === "fuzzy"){
-    const tokens = q.split(/\s+/).filter(Boolean);
-    for(const tok of tokens){
-      if(!t.includes(tok)) return false;
-    }
-    return true;
-  }else{
-    return t.includes(q);
-  }
-}
-function getSortVal(r, key){
-  if(key === "len") return Number(r.len) || 0;
-  if(key === "id") return normalize(r.id);
-  if(key === "title") return normalize(r.title);
-  if(key === "artist") return normalize(r.artist);
-  if(key === "who") return normalize(r.who);
-  if(key === "lang") return normalize(r.lang);
-  if(key === "page") return normalize(r.page);
-  if(key === "book") return normalize(r.book);
-  return normalize(r.title);
-}
-
-function applyFilterSortRender(keepScroll=false){
-  const prevTop = $("viewport").scrollTop;
-
-  const uids = [];
-  for(let uid=0; uid<base.length; uid++){
-    const r = base[uid];
-    if(!passDropdownFilters(r)) continue;
-    if(!passTextFilter(r)) continue;
-    uids.push(uid);
-  }
-
-  if(sortKey && sortDir){
-    const sign = (sortDir === "asc") ? 1 : -1;
-    uids.sort((a,b)=>{
-      const ra = base[a], rb = base[b];
-      const va = getSortVal(ra, sortKey);
-      const vb = getSortVal(rb, sortKey);
-
-      if(sortKey === "len"){
-        return (va - vb) * sign || (a-b);
-      }
-      if(va < vb) return -1*sign;
-      if(va > vb) return  1*sign;
-      return (a-b);
+    const LIMITS = Object.freeze({
+      MAX_OPTIONS: 250,
+      OVERSCAN: 10,
+      TO_TOP_SHOW_AT: 220,
+      TOAST_MS: 2000,
     });
-  }
 
-  viewUIDs = uids;
-  $("countPill").textContent = `共 ${base.length.toLocaleString()} 筆｜顯示 ${viewUIDs.length.toLocaleString()} 筆`;
+    const COLS_BASE = Object.freeze([
+      { key:"copy",   label:"",   sortable:false, widthVar:"--copyCol" },
+      { key:"id",     label:"編號", sortable:true,  widthVar:"--colFixed", wrap2:true },
+      { key:"title",  label:"歌名", sortable:true,  widthVar:"--colFixed", wrap2:true },
+      { key:"artist", label:"歌手", sortable:true,  widthVar:"--colFixed", wrap2:true },
+    ]);
 
-  updateSpacer();
-  render();
+    const COLS_EXTRA = Object.freeze([
+      { key:"lang", label:"語言",  sortable:true, widthVar:"--colLang" },
+      { key:"len",  label:"字數",  sortable:true, widthVar:"--colLen" },
+      { key:"who",  label:"誰的歌", sortable:true, widthVar:"--colWho" },
+      { key:"page", label:"頁數",  sortable:true, widthVar:"--colPage" },
+      { key:"book", label:"歌本",  sortable:true, widthVar:"--colWho" }, // 既有設計：book 使用 who 的寬度
+    ]);
 
-  if(keepScroll){
-    $("viewport").scrollTop = Math.min(prevTop, Math.max(0, viewUIDs.length*ROW_H - $("viewport").clientHeight));
-  }else{
-    $("viewport").scrollTop = 0;
-  }
-  updateToTopVisible();
-}
+    // =========================
+    // 2) DOM helpers (UI layer)
+    // =========================
+    const UI = (() => {
+      const $ = (id) => document.getElementById(id);
 
-function updateSpacer(){
-  $("spacer").style.height = (viewUIDs.length * ROW_H + 8) + "px";
-}
+      const els = Object.freeze({
+        topHeader: $("topHeader"),
+        countPill: $("countPill"),
+        thead: $("thead"),
+        viewport: $("viewport"),
+        spacer: $("spacer"),
+        rows: $("rows"),
+        tableMinWidth: $("tableMinWidth"),
 
-// ===== 虛擬渲染 =====
-function render(){
-  const vp = $("viewport");
-  const rows = $("rows");
-  const scrollTop = vp.scrollTop;
-  const height = vp.clientHeight;
+        q: $("q"),
+        btnFilter: $("btnFilter"),
+        btnClearFilters: $("btnClearFilters"),
 
-  const start = Math.max(0, Math.floor(scrollTop / ROW_H) - OVERSCAN);
-  const end = Math.min(viewUIDs.length, Math.ceil((scrollTop + height) / ROW_H) + OVERSCAN);
+        filterLang: $("filterLang"),
+        filterLen: $("filterLen"),
+        filterWho: $("filterWho"),
 
-  rows.style.transform = `translateY(${start * ROW_H}px)`;
+        btnToggleFilters: $("btnToggleFilters"),
+        filtersBody: $("filtersBody"),
 
-  const cols = getActiveCols();
-  let html = "";
+        btnToTop: $("btnToTop"),
 
-  for(let i=start; i<end; i++){
-    const uid = viewUIDs[i];
-    const r = base[uid];
+        toast: $("toast"),
+        toastMsg: $("toastMsg"),
+        toastSub: $("toastSub"),
 
-    const cells = [];
-    for(const c of cols){
-      if(c.key === "copy"){
-        cells.push(`
-          <div class="cell copyWrap">
-            <button class="copyBtn" title="複製這一筆" data-copy-uid="${uid}">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M9 9h10v12H9V9Z" stroke="currentColor" stroke-width="1.8" />
-                <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.8" />
-              </svg>
-            </button>
-          </div>
-        `);
-        continue;
-      }
+        // modals
+        modalBack: $("modalBack"),
+        modalTitle: $("modalTitle"),
+        modalBody: $("modalBody"),
+        modalClose: $("modalClose"),
+        modalClose2: $("modalClose2"),
+        modalCopy: $("modalCopy"),
 
-      const wrapClass = c.wrap2 ? "wrap2" : "";
-      if(c.key === "id"){
-        cells.push(`<div class="cell ${wrapClass}" title="${escapeHtml(r.id)}">${escapeHtml(r.id)}</div>`);
-      }else if(c.key === "title"){
-        cells.push(`<div class="cell ${wrapClass}" title="${escapeHtml(r.title)}">${escapeHtml(r.title)}</div>`);
-      }else if(c.key === "artist"){
-        cells.push(`<div class="cell ${wrapClass}" title="${escapeHtml(r.artist)}">${escapeHtml(r.artist)}</div>`);
-      }else if(c.key === "lang"){
-        cells.push(`<div class="cell"><span class="tag">${escapeHtml(r.lang)}</span></div>`);
-      }else if(c.key === "len"){
-        cells.push(`<div class="cell small" title="${escapeHtml(r.len)}">${escapeHtml(r.len)}</div>`);
-      }else if(c.key === "who"){
-        cells.push(`<div class="cell small" title="${escapeHtml(r.who)}">${escapeHtml(r.who)}</div>`);
-      }else if(c.key === "page"){
-        cells.push(`<div class="cell small" title="${escapeHtml(r.page)}">${escapeHtml(r.page)}</div>`);
-      }else if(c.key === "book"){
-        cells.push(`<div class="cell small" title="${escapeHtml(r.book)}">${escapeHtml(r.book)}</div>`);
-      }else{
-        cells.push(`<div class="cell"></div>`);
-      }
-    }
+        // settings modal
+        btnSettings: $("btnSettings"),
+        settingsBack: $("settingsBack"),
+        settingsClose: $("settingsClose"),
+        settingsDone: $("settingsDone"),
 
-    html += `<div class="row" data-row-uid="${uid}">${cells.join("")}</div>`;
-  }
+        toggleLight: $("toggleLight"),
+        colLang: $("colLang"),
+        colLen: $("colLen"),
+        colWho: $("colWho"),
+        colPage: $("colPage"),
+        colBook: $("colBook"),
+      });
 
-  rows.innerHTML = html;
-}
+      const toast = (msg, sub="") => {
+        els.toastMsg.textContent = msg;
+        els.toastSub.textContent = sub;
+        els.toast.classList.add("show");
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(() => els.toast.classList.remove("show"), LIMITS.TOAST_MS);
+      };
 
-// ===== 詳細視窗 =====
-function openModal(uid){
-  const r = base[uid];
-  if(!r) return;
-  window.__modalUID = uid;
+      const escapeHtml = (s) => (s ?? "").toString()
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
 
-  $("modalTitle").textContent = r.title ? `詳細資料：${r.title}` : "詳細資料";
+      const normalize = (s) => (s ?? "").toString().toLowerCase().trim();
 
-  const items = [
-    ["編號", r.id],
-    ["歌名", r.title],
-    ["歌手", r.artist],
-    ["語言", r.lang],
-    ["字數", r.len],
-    ["誰的歌", r.who],
-    ["頁數", r.page],
-    ["歌本", r.book],
-  ];
+      return { $, els, toast, escapeHtml, normalize };
+    })();
 
-  let html = "";
-  for(const [k,v] of items){
-    html += `<div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v || "")}</div>`;
-  }
-  $("modalBody").innerHTML = html;
+    // =========================
+    // 3) Storage (persistence)
+    // =========================
+    const Storage = (() => {
+      const safeGet = (k, fallback=null) => {
+        try { return localStorage.getItem(k) ?? fallback; } catch(_) { return fallback; }
+      };
+      const safeSet = (k, v) => {
+        try { localStorage.setItem(k, v); } catch(_) {}
+      };
+      const safeGetJSON = (k, fallback=null) => {
+        try {
+          const raw = localStorage.getItem(k);
+          if(!raw) return fallback;
+          return JSON.parse(raw);
+        } catch(_) { return fallback; }
+      };
+      const safeSetJSON = (k, obj) => {
+        try { localStorage.setItem(k, JSON.stringify(obj)); } catch(_) {}
+      };
+      return { safeGet, safeSet, safeGetJSON, safeSetJSON };
+    })();
 
-  $("modalBack").classList.add("show");
-  $("modalBack").setAttribute("aria-hidden","false");
-}
+    // =========================
+    // 4) Theme service
+    // =========================
+    const Theme = (() => {
+      const apply = (theme) => {
+        if(theme === "light") document.documentElement.setAttribute("data-theme","light");
+        else document.documentElement.removeAttribute("data-theme");
+        Storage.safeSet(KEYS.THEME, theme);
+      };
+      const read = () => Storage.safeGet(KEYS.THEME, "dark") || "dark";
+      return { apply, read };
+    })();
 
-function closeModal(){
-  $("modalBack").classList.remove("show");
-  $("modalBack").setAttribute("aria-hidden","true");
-  window.__modalUID = null;
-}
+    // =========================
+    // 5) Metrics (CSS var -> px, docking height)
+    // =========================
+    const Metrics = (() => {
+      const measureCssVarPx = (varName) => {
+        const raw = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+        const probe = document.createElement("div");
+        probe.style.position = "absolute";
+        probe.style.left = "-99999px";
+        probe.style.width = raw;
+        document.body.appendChild(probe);
+        const px = probe.getBoundingClientRect().width;
+        document.body.removeChild(probe);
+        return px;
+      };
 
-// ===== 啟動 =====
-init();
-</script>
+      const getRowHPx = () => {
+        const v = getComputedStyle(document.documentElement).getPropertyValue("--rowH").trim();
+        const probe = document.createElement("div");
+        probe.style.position = "absolute";
+        probe.style.left = "-99999px";
+        probe.style.width = v;
+        document.body.appendChild(probe);
+        const px = probe.getBoundingClientRect().width;
+        document.body.removeChild(probe);
+        return Math.max(24, Math.round(px));
+      };
 
+      const updateDockHeights = () => {
+        const h = UI.els.topHeader?.offsetHeight || 0;
+        document.documentElement.style.setProperty("--headerH", h + "px");
+      };
+
+      return { measureCssVarPx, getRowHPx, updateDockHeights };
+    })();
+
+    // =========================
+    // 6) Clipboard
+    // =========================
+    const Clipboard = (() => {
+      const copy = async (text) => {
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch(_) {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+      };
+      return { copy };
+    })();
+
+    // =========================
+    // 7) App State (single source of truth)
+    // =========================
+    const State = {
+      base: [],          // [{...}] cleaned
+      copyLine: [],      // per uid line
+      viewUIDs: [],      // filtered/sorted uids
+      sortKey: "",
+      sortDir: "",
+      filters: { lang:"", len:"", who:"" },
+      shown: { lang:false, len:false, who:false, page:false, book:false },
+      filtersCollapsed: false,
+      ROW_H: 72,
+      modalUID: null,
+    };
+
+    // =========================
+    // 8) Data preparation
+    // =========================
+    const Data = (() => {
+      const normalizeRow = (r) => ({
+        who: (r.who ?? "").toString().trim(),
+        id: (r.id ?? "").toString().trim(),
+        title: (r.title ?? "").toString().trim(),
+        artist: (r.artist ?? "").toString().trim(),
+        lang: (r.lang ?? "").toString().trim(),
+        page: (r.page ?? "").toString().trim(),
+        len: (r.len ?? "").toString().trim(),
+        book: ((r.book ?? r.songbook ?? r.bookName ?? "")).toString().trim(),
+      });
+
+      const build = () => {
+        State.base = SONGS.map(normalizeRow);
+        State.copyLine = State.base.map(r => [r.who,r.id,r.title,r.artist,r.lang,r.page,r.len,r.book].filter(x => x !== "").join("\t"));
+      };
+
+      return { build };
+    })();
+
+    // =========================
+    // 9) Filters / Options
+    // =========================
+    const FilterOptions = (() => {
+      const uniqueValues = (key) => {
+        const set = new Set();
+        for(const r of State.base){
+          const v = (r[key] ?? "").toString().trim();
+          if(v) set.add(v);
+        }
+        return Array.from(set);
+      };
+
+      const setSelectOptions = (selectEl, values, placeholder="全部") => {
+        selectEl.innerHTML = "";
+        selectEl.appendChild(new Option(placeholder, ""));
+        if(values.length > LIMITS.MAX_OPTIONS){
+          const opt = new Option(`（選項太多：${values.length}）`, "");
+          opt.disabled = true;
+          selectEl.appendChild(opt);
+          return;
+        }
+        for(const v of values) selectEl.appendChild(new Option(v, v));
+      };
+
+      const build = () => {
+        const langs = uniqueValues("lang").sort((a,b)=>a.localeCompare(b, "zh-Hant"));
+        const whos  = uniqueValues("who").sort((a,b)=>a.localeCompare(b, "zh-Hant"));
+        const lens  = uniqueValues("len").sort((a,b)=> (Number(a)||0) - (Number(b)||0));
+        setSelectOptions(UI.els.filterLang, langs, "全部");
+        setSelectOptions(UI.els.filterLen,  lens,  "全部");
+        setSelectOptions(UI.els.filterWho,  whos,  "全部");
+      };
+
+      return { build };
+    })();
+
+    // =========================
+    // 10) Column config / Header / Grid
+    // =========================
+    const Columns = (() => {
+      const loadShown = () => {
+        const obj = Storage.safeGetJSON(KEYS.SHOWN, null);
+        if(obj && typeof obj === "object"){
+          for(const k of ["lang","len","who","page","book"]){
+            if(typeof obj[k] === "boolean") State.shown[k] = obj[k];
+          }
+        }
+      };
+
+      const saveShown = () => Storage.safeSetJSON(KEYS.SHOWN, State.shown);
+
+      const getActiveCols = () => {
+        const cols = [...COLS_BASE];
+        if(State.shown.lang) cols.push(COLS_EXTRA.find(c=>c.key==="lang"));
+        if(State.shown.len)  cols.push(COLS_EXTRA.find(c=>c.key==="len"));
+        if(State.shown.who)  cols.push(COLS_EXTRA.find(c=>c.key==="who"));
+        if(State.shown.page) cols.push(COLS_EXTRA.find(c=>c.key==="page"));
+        if(State.shown.book) cols.push(COLS_EXTRA.find(c=>c.key==="book"));
+        return cols.filter(Boolean);
+      };
+
+      const setGridCssVar = (cols) => {
+        const parts = cols.map(c => `var(${c.widthVar})`);
+        document.documentElement.style.setProperty("--grid", parts.join(" "));
+      };
+
+      const setMinWidth = (cols) => {
+        let minW = 0;
+        for(const c of cols){
+          const w = Metrics.measureCssVarPx(c.widthVar);
+          minW += w + 16; // cell padding spacing
+        }
+        UI.els.tableMinWidth.style.minWidth = Math.max(420, Math.ceil(minW)) + "px";
+      };
+
+      const buildHeader = (cols) => {
+        const { escapeHtml } = UI;
+        let html = "";
+        for(const c of cols){
+          if(c.key === "copy"){
+            html += `<div class="th"></div>`;
+            continue;
+          }
+          const isActive = (State.sortKey === c.key);
+          const mark =
+            !isActive ? `<span class="sortMark off">↕</span>` :
+            (State.sortDir === "asc") ? `<span class="sortMark">↑</span>` :
+            (State.sortDir === "desc") ? `<span class="sortMark">↓</span>` :
+            `<span class="sortMark off">↕</span>`;
+
+          html += `
+            <div class="th sortable" data-sort-key="${c.key}">
+              <span>${escapeHtml(c.label)}</span>
+              ${mark}
+            </div>
+          `;
+        }
+        UI.els.thead.innerHTML = html;
+      };
+
+      const rebuild = () => {
+        const cols = getActiveCols();
+        setGridCssVar(cols);
+        setMinWidth(cols);
+        buildHeader(cols);
+      };
+
+      const toggleSort = (key) => {
+        if(State.sortKey !== key){
+          State.sortKey = key;
+          State.sortDir = "asc";
+        }else{
+          if(State.sortDir === "asc") State.sortDir = "desc";
+          else if(State.sortDir === "desc"){ State.sortKey = ""; State.sortDir = ""; }
+          else State.sortDir = "asc";
+        }
+      };
+
+      return { loadShown, saveShown, getActiveCols, rebuild, toggleSort };
+    })();
+
+    // =========================
+    // 11) Query / Sort logic
+    // =========================
+    const Query = (() => {
+      const currentMatchMode = () =>
+        document.querySelector('input[name="matchMode"]:checked')?.value || "fuzzy";
+
+      const passDropdownFilters = (r) => {
+        const f = State.filters;
+        if(f.lang && r.lang !== f.lang) return false;
+        if(f.len  && r.len  !== f.len)  return false;
+        if(f.who  && r.who  !== f.who)  return false;
+        return true;
+      };
+
+      const combinedText = (r) => UI.normalize([r.who, r.id, r.title, r.artist, r.lang, r.page, r.len, r.book].join(" "));
+
+      const passTextFilter = (r) => {
+        const q = UI.normalize(UI.els.q.value);
+        if(!q) return true;
+        const mode = currentMatchMode();
+        const t = combinedText(r);
+
+        if(mode === "fuzzy"){
+          const tokens = q.split(/\s+/).filter(Boolean);
+          for(const tok of tokens){
+            if(!t.includes(tok)) return false;
+          }
+          return true;
+        }
+        return t.includes(q);
+      };
+
+      const getSortVal = (r, key) => {
+        if(key === "len") return Number(r.len) || 0;
+        if(key === "id") return UI.normalize(r.id);
+        if(key === "title") return UI.normalize(r.title);
+        if(key === "artist") return UI.normalize(r.artist);
+        if(key === "who") return UI.normalize(r.who);
+        if(key === "lang") return UI.normalize(r.lang);
+        if(key === "page") return UI.normalize(r.page);
+        if(key === "book") return UI.normalize(r.book);
+        return UI.normalize(r.title);
+      };
+
+      const apply = (keepScroll=false) => {
+        const prevTop = UI.els.viewport.scrollTop;
+
+        const uids = [];
+        for(let uid=0; uid<State.base.length; uid++){
+          const r = State.base[uid];
+          if(!passDropdownFilters(r)) continue;
+          if(!passTextFilter(r)) continue;
+          uids.push(uid);
+        }
+
+        if(State.sortKey && State.sortDir){
+          const sign = (State.sortDir === "asc") ? 1 : -1;
+          const k = State.sortKey;
+          uids.sort((a,b) => {
+            const ra = State.base[a], rb = State.base[b];
+            const va = getSortVal(ra, k);
+            const vb = getSortVal(rb, k);
+
+            if(k === "len"){
+              return (va - vb) * sign || (a-b);
+            }
+            if(va < vb) return -1 * sign;
+            if(va > vb) return  1 * sign;
+            return (a-b);
+          });
+        }
+
+        State.viewUIDs = uids;
+        UI.els.countPill.textContent =
+          `共 ${State.base.length.toLocaleString()} 筆｜顯示 ${State.viewUIDs.length.toLocaleString()} 筆`;
+
+        VirtualList.updateSpacer();
+        VirtualList.render();
+
+        if(keepScroll){
+          UI.els.viewport.scrollTop = Math.min(
+            prevTop,
+            Math.max(0, State.viewUIDs.length * State.ROW_H - UI.els.viewport.clientHeight)
+          );
+        }else{
+          UI.els.viewport.scrollTop = 0;
+        }
+
+        UX.updateToTopVisible();
+      };
+
+      return { apply };
+    })();
+
+    // =========================
+    // 12) Virtual list renderer
+    // =========================
+    const VirtualList = (() => {
+      const updateSpacer = () => {
+        UI.els.spacer.style.height = (State.viewUIDs.length * State.ROW_H + 8) + "px";
+      };
+
+      const render = () => {
+        const vp = UI.els.viewport;
+        const rowsEl = UI.els.rows;
+
+        const scrollTop = vp.scrollTop;
+        const height = vp.clientHeight;
+
+        const start = Math.max(0, Math.floor(scrollTop / State.ROW_H) - LIMITS.OVERSCAN);
+        const end = Math.min(State.viewUIDs.length, Math.ceil((scrollTop + height) / State.ROW_H) + LIMITS.OVERSCAN);
+
+        rowsEl.style.transform = `translateY(${start * State.ROW_H}px)`;
+
+        const cols = Columns.getActiveCols();
+        const { escapeHtml } = UI;
+
+        let html = "";
+        for(let i=start; i<end; i++){
+          const uid = State.viewUIDs[i];
+          const r = State.base[uid];
+
+          const cells = [];
+          for(const c of cols){
+            if(c.key === "copy"){
+              cells.push(`
+                <div class="cell copyWrap">
+                  <button class="copyBtn" title="複製這一筆" data-copy-uid="${uid}">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M9 9h10v12H9V9Z" stroke="currentColor" stroke-width="1.8" />
+                      <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" stroke="currentColor" stroke-width="1.8" />
+                    </svg>
+                  </button>
+                </div>
+              `);
+              continue;
+            }
+
+            const wrapClass = c.wrap2 ? "wrap2" : "";
+            if(c.key === "id"){
+              cells.push(`<div class="cell ${wrapClass}" title="${escapeHtml(r.id)}">${escapeHtml(r.id)}</div>`);
+            }else if(c.key === "title"){
+              cells.push(`<div class="cell ${wrapClass}" title="${escapeHtml(r.title)}">${escapeHtml(r.title)}</div>`);
+            }else if(c.key === "artist"){
+              cells.push(`<div class="cell ${wrapClass}" title="${escapeHtml(r.artist)}">${escapeHtml(r.artist)}</div>`);
+            }else if(c.key === "lang"){
+              cells.push(`<div class="cell"><span class="tag">${escapeHtml(r.lang)}</span></div>`);
+            }else if(c.key === "len"){
+              cells.push(`<div class="cell small" title="${escapeHtml(r.len)}">${escapeHtml(r.len)}</div>`);
+            }else if(c.key === "who"){
+              cells.push(`<div class="cell small" title="${escapeHtml(r.who)}">${escapeHtml(r.who)}</div>`);
+            }else if(c.key === "page"){
+              cells.push(`<div class="cell small" title="${escapeHtml(r.page)}">${escapeHtml(r.page)}</div>`);
+            }else if(c.key === "book"){
+              cells.push(`<div class="cell small" title="${escapeHtml(r.book)}">${escapeHtml(r.book)}</div>`);
+            }else{
+              cells.push(`<div class="cell"></div>`);
+            }
+          }
+
+          html += `<div class="row" data-row-uid="${uid}">${cells.join("")}</div>`;
+        }
+
+        rowsEl.innerHTML = html;
+      };
+
+      return { updateSpacer, render };
+    })();
+
+    // =========================
+    // 13) Modals
+    // =========================
+    const Modal = (() => {
+      const openDetail = (uid) => {
+        const r = State.base[uid];
+        if(!r) return;
+        State.modalUID = uid;
+
+        UI.els.modalTitle.textContent = r.title ? `詳細資料：${r.title}` : "詳細資料";
+
+        const items = [
+          ["編號", r.id],
+          ["歌名", r.title],
+          ["歌手", r.artist],
+          ["語言", r.lang],
+          ["字數", r.len],
+          ["誰的歌", r.who],
+          ["頁數", r.page],
+          ["歌本", r.book],
+        ];
+
+        let html = "";
+        for(const [k,v] of items){
+          html += `<div class="k">${UI.escapeHtml(k)}</div><div class="v">${UI.escapeHtml(v || "")}</div>`;
+        }
+        UI.els.modalBody.innerHTML = html;
+
+        UI.els.modalBack.classList.add("show");
+        UI.els.modalBack.setAttribute("aria-hidden","false");
+      };
+
+      const closeDetail = () => {
+        UI.els.modalBack.classList.remove("show");
+        UI.els.modalBack.setAttribute("aria-hidden","true");
+        State.modalUID = null;
+      };
+
+      const openSettings = () => {
+        UI.els.settingsBack.classList.add("show");
+        UI.els.settingsBack.setAttribute("aria-hidden","false");
+      };
+
+      const closeSettings = () => {
+        UI.els.settingsBack.classList.remove("show");
+        UI.els.settingsBack.setAttribute("aria-hidden","true");
+      };
+
+      return { openDetail, closeDetail, openSettings, closeSettings };
+    })();
+
+    // =========================
+    // 14) UX helpers (collapse + toTop)
+    // =========================
+    const UX = (() => {
+      const setFiltersCollapsed = (collapsed) => {
+        State.filtersCollapsed = !!collapsed;
+        UI.els.btnToggleFilters.setAttribute("aria-expanded", (!State.filtersCollapsed).toString());
+        UI.els.filtersBody.classList.toggle("collapsed", State.filtersCollapsed);
+      };
+
+      const toggleFilters = () => {
+        setFiltersCollapsed(!State.filtersCollapsed);
+      };
+
+      const scrollToTop = () => {
+        UI.els.viewport?.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+
+      const updateToTopVisible = () => {
+        const vp = UI.els.viewport;
+        const show = (vp && vp.scrollTop > LIMITS.TO_TOP_SHOW_AT) || window.scrollY > LIMITS.TO_TOP_SHOW_AT;
+        UI.els.btnToTop.classList.toggle("show", !!show);
+      };
+
+      return { setFiltersCollapsed, toggleFilters, scrollToTop, updateToTopVisible };
+    })();
+
+    // =========================
+    // 15) Settings sync (UI <-> State)
+    // =========================
+    const Settings = (() => {
+      const syncToUI = () => {
+        const theme = Theme.read();
+        UI.els.toggleLight.checked = (theme === "light");
+
+        UI.els.colLang.checked = State.shown.lang;
+        UI.els.colLen.checked  = State.shown.len;
+        UI.els.colWho.checked  = State.shown.who;
+        UI.els.colPage.checked = State.shown.page;
+        UI.els.colBook.checked = State.shown.book;
+      };
+
+      const handleThemeToggle = () => {
+        Theme.apply(UI.els.toggleLight.checked ? "light" : "dark");
+        Metrics.updateDockHeights();
+        State.ROW_H = Metrics.getRowHPx();
+        Columns.rebuild();
+        Query.apply(true);
+        UI.toast(UI.els.toggleLight.checked ? "已切換淺色模式" : "已切換深色模式");
+      };
+
+      const handleShownToggle = (key, checked) => {
+        State.shown[key] = !!checked;
+        Columns.saveShown();
+        Columns.rebuild();
+        Query.apply(true);
+      };
+
+      return { syncToUI, handleThemeToggle, handleShownToggle };
+    })();
+
+    // =========================
+    // 16) Event bindings
+    // =========================
+    const Events = (() => {
+      const bind = () => {
+        // settings modal
+        UI.els.btnSettings.addEventListener("click", Modal.openSettings);
+        UI.els.settingsClose.addEventListener("click", Modal.closeSettings);
+        UI.els.settingsDone.addEventListener("click", Modal.closeSettings);
+        UI.els.settingsBack.addEventListener("click", (e) => {
+          if(e.target === UI.els.settingsBack) Modal.closeSettings();
+        });
+
+        // theme
+        UI.els.toggleLight.addEventListener("change", Settings.handleThemeToggle);
+
+        // filter collapse
+        UI.els.btnToggleFilters.addEventListener("click", () => {
+          UX.toggleFilters();
+          UI.toast(State.filtersCollapsed ? "已收合篩選" : "已展開篩選");
+        });
+
+        // to top
+        UI.els.btnToTop.addEventListener("click", UX.scrollToTop);
+
+        // query input
+        UI.els.q.addEventListener("keydown", (e) => {
+          if(e.key === "Enter"){
+            Query.apply();
+            UI.toast("已套用文字查詢", `顯示 ${State.viewUIDs.length.toLocaleString()} 筆`);
+          }else if(e.key === "Escape"){
+            UI.els.q.value = "";
+            UI.toast("已清空文字輸入", "（不自動篩選）");
+          }
+        });
+        UI.els.btnFilter.addEventListener("click", () => {
+          Query.apply();
+          UI.toast("已套用篩選", `顯示 ${State.viewUIDs.length.toLocaleString()} 筆`);
+        });
+
+        // clear
+        UI.els.btnClearFilters.addEventListener("click", () => {
+          UI.els.q.value = "";
+          State.filters.lang = State.filters.len = State.filters.who = "";
+          UI.els.filterLang.value = "";
+          UI.els.filterLen.value = "";
+          UI.els.filterWho.value = "";
+          State.sortKey = ""; State.sortDir = "";
+          Columns.rebuild();
+          Query.apply();
+          UI.toast("已清空", "文字/下拉/排序 已重置");
+        });
+
+        // dropdown filters
+        UI.els.filterLang.addEventListener("change", () => { State.filters.lang = UI.els.filterLang.value; Query.apply(); });
+        UI.els.filterLen.addEventListener("change",  () => { State.filters.len  = UI.els.filterLen.value;  Query.apply(); });
+        UI.els.filterWho.addEventListener("change",  () => { State.filters.who  = UI.els.filterWho.value;  Query.apply(); });
+
+        // shown columns
+        UI.els.colLang.addEventListener("change", () => Settings.handleShownToggle("lang", UI.els.colLang.checked));
+        UI.els.colLen.addEventListener("change",  () => Settings.handleShownToggle("len",  UI.els.colLen.checked));
+        UI.els.colWho.addEventListener("change",  () => Settings.handleShownToggle("who",  UI.els.colWho.checked));
+        UI.els.colPage.addEventListener("change", () => Settings.handleShownToggle("page", UI.els.colPage.checked));
+        UI.els.colBook.addEventListener("change", () => Settings.handleShownToggle("book", UI.els.colBook.checked));
+
+        // sorting header (event delegation)
+        UI.els.thead.addEventListener("click", (e) => {
+          const el = e.target.closest("[data-sort-key]");
+          if(!el) return;
+          const key = el.getAttribute("data-sort-key");
+          Columns.toggleSort(key);
+          Columns.rebuild();
+          Query.apply();
+        });
+
+        // virtual scroll
+        UI.els.viewport.addEventListener("scroll", () => {
+          VirtualList.render();
+          UX.updateToTopVisible();
+        });
+        window.addEventListener("scroll", UX.updateToTopVisible);
+
+        // resize
+        window.addEventListener("resize", () => {
+          Metrics.updateDockHeights();
+          State.ROW_H = Metrics.getRowHPx();
+          Columns.rebuild();
+          VirtualList.render();
+          UX.updateToTopVisible();
+        });
+
+        // row click / copy click (event delegation)
+        UI.els.rows.addEventListener("click", async (e) => {
+          const copyBtn = e.target.closest("[data-copy-uid]");
+          if(copyBtn){
+            e.stopPropagation();
+            const uid = Number(copyBtn.getAttribute("data-copy-uid"));
+            await Clipboard.copy(State.copyLine[uid] ?? "");
+            UI.toast("已複製", State.base[uid]?.title ? `「${State.base[uid].title}」` : "");
+            return;
+          }
+          const row = e.target.closest("[data-row-uid]");
+          if(row){
+            const uid = Number(row.getAttribute("data-row-uid"));
+            Modal.openDetail(uid);
+          }
+        });
+
+        // detail modal close
+        UI.els.modalClose.addEventListener("click", Modal.closeDetail);
+        UI.els.modalClose2.addEventListener("click", Modal.closeDetail);
+        UI.els.modalBack.addEventListener("click", (e) => {
+          if(e.target === UI.els.modalBack) Modal.closeDetail();
+        });
+
+        // ESC closes modal(s)
+        document.addEventListener("keydown", (e) => {
+          if(e.key !== "Escape") return;
+          if(UI.els.modalBack.classList.contains("show")) Modal.closeDetail();
+          if(UI.els.settingsBack.classList.contains("show")) Modal.closeSettings();
+        });
+
+        // detail modal copy
+        UI.els.modalCopy.addEventListener("click", async () => {
+          const uid = State.modalUID;
+          if(uid == null) return;
+          await Clipboard.copy(State.copyLine[uid] ?? "");
+          UI.toast("已複製", State.base[uid]?.title ? `「${State.base[uid].title}」` : "");
+        });
+      };
+
+      return { bind };
+    })();
+
+    // =========================
+    // 17) App bootstrap
+    // =========================
+    const App = (() => {
+      const init = () => {
+        // theme first (affects metrics)
+        Theme.apply(Theme.read());
+
+        // metrics
+        Metrics.updateDockHeights();
+        State.ROW_H = Metrics.getRowHPx();
+
+        // state persistence
+        Columns.loadShown();
+
+        // sync settings UI
+        Settings.syncToUI();
+
+        // data
+        Data.build();
+
+        // filters dropdown options
+        FilterOptions.build();
+
+        // default expanded filters
+        UX.setFiltersCollapsed(false);
+
+        // columns + header
+        Columns.rebuild();
+
+        // bind events
+        Events.bind();
+
+        // first render
+        Query.apply(true);
+        UX.updateToTopVisible();
+      };
+
+      return { init };
+    })();
+
+    // go
+    App.init();
+  })();
+  </script>
 </body>
 </html>
